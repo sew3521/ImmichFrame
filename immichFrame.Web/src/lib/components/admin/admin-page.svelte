@@ -25,6 +25,7 @@
 	import SettingField from './setting-field.svelte';
 	import AccountEditor from './account-editor.svelte';
 	import CalendarEditor from './calendar-editor.svelte';
+        import { generateCalendarId } from '$lib/utils/calendar-uuid';
 
 	type PageState = 'loading' | 'setup' | 'disabled' | 'login' | 'editor' | 'error';
 
@@ -118,7 +119,7 @@
 	    settings.General.calendars = [
 	        ...(settings.General.calendars ?? []),
 	        {
-	            id: crypto.randomUUID(),
+	            id: generateCalendarId(),
 	            name: `Calendar ${(settings.General.calendars?.length ?? 0) + 1}`,
 	            url: '',
 	            color: '#6299EC',
