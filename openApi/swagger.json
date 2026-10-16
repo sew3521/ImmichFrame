@@ -164,7 +164,7 @@
         },
         "security": [
           {
-            "ImmichFrameAdminScheme": [ ]
+            "ImmichFrameAdminScheme": []
           }
         ]
       },
@@ -246,7 +246,7 @@
         },
         "security": [
           {
-            "ImmichFrameAdminScheme": [ ]
+            "ImmichFrameAdminScheme": []
           }
         ]
       }
@@ -310,7 +310,7 @@
         },
         "security": [
           {
-            "ImmichFrameAdminScheme": [ ]
+            "ImmichFrameAdminScheme": []
           }
         ]
       }
@@ -1442,6 +1442,9 @@
           "language": {
             "type": "string",
             "nullable": true
+          },
+          "enableFrostedGlassUI": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1730,6 +1733,15 @@
           "adminPassword": {
             "type": "string",
             "nullable": true
+          },
+          "enableFrostedGlassUI": {
+            "type": "boolean"
+          },
+          "calendarDaysAhead": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "maximum": 30
           }
         },
         "additionalProperties": false
@@ -1897,7 +1909,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "ServerAccountSettings": {
         "type": "object",
@@ -1975,6 +1987,14 @@
           "rating": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "excludedPeople": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
             "nullable": true
           }
         },

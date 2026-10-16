@@ -4,19 +4,22 @@ using ImmichFrame.Core.Helpers;
 using ImmichFrame.Core.Interfaces;
 using ImmichFrame.Core.Logic.Pool;
 using ImmichFrame.Core.Models;
+using Microsoft.Extensions.Logging;
 
 namespace ImmichFrame.Core.Logic;
 
 public class PooledImmichFrameLogic : IAccountImmichFrameLogic, IDisposable
 {
+    private readonly ILogger<PooledImmichFrameLogic> _logger;
     private readonly IGeneralSettings _generalSettings;
     private readonly IApiCache _apiCache;
     private readonly IAssetPool _pool;
     private readonly ImmichApi _immichApi;
     private readonly string _downloadLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ImageCache");
 
-    public PooledImmichFrameLogic(IAccountSettings accountSettings, IGeneralSettings generalSettings, IHttpClientFactory httpClientFactory)
+    public PooledImmichFrameLogic(IAccountSettings accountSettings, IGeneralSettings generalSettings, IHttpClientFactory httpClientFactory, ILogger<PooledImmichFrameLogic> logger)
     {
+        _logger = logger;
         _generalSettings = generalSettings;
 
         var httpClient = httpClientFactory.CreateClient(ImmichApiHttpClientExtensions.ImmichApiAccountClient);
@@ -57,17 +60,98 @@ public class PooledImmichFrameLogic : IAccountImmichFrameLogic, IDisposable
         return pools.Count == 1 ? pools[0] : new MultiAssetPool(pools);
     }
 
+    private async Task<bool> IsAssetAllowed(
+        AssetResponseDto asset,
+        bool refreshMetadata = false)
+    {
+        if (!AssetExclusionFilter.HasExclusions(AccountSettings))
+        {
+            return true;
+        }
+
+        try
+        {
+            if (refreshMetadata ||
+                (AccountSettings.ExcludedPeople.Count > 0 && asset.People == null))
+            {
+                asset = await _immichApi.GetAssetInfoAsync(asset.Id, null, null);
+
+                if (asset == null)
+                {
+                    return false;
+                }
+            }
+
+            return await AssetExclusionFilter.IsAllowed(
+                asset,
+                AccountSettings,
+                async id => await _immichApi.GetAllAlbumsAsync(
+                    id, null, null, null, null)
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Asset exclusion verification failed for asset {AssetId}. Asset rejected.",
+                asset.Id
+            );
+
+            // Fail closed: never approve an asset we cannot verify.
+            return false;
+        }
+    }
+
     public async Task<AssetResponseDto?> GetNextAsset()
     {
-        return (await _pool.GetAssets(1)).FirstOrDefault();
+        if (!AssetExclusionFilter.HasExclusions(AccountSettings))
+        {
+            return (await _pool.GetAssets(1)).FirstOrDefault();
+        }
+
+        var selector = new FilteredAssetSelector(_pool, asset => IsAssetAllowed(asset));
+        return await selector.GetNextAsset();
     }
 
     public async Task<IEnumerable<AssetResponseDto>> GetAssets()
     {
-        return await _pool.GetAssets(25);
+        if (!AssetExclusionFilter.HasExclusions(AccountSettings))
+        {
+            return await _pool.GetAssets(25);
+        }
+
+        var selector = new FilteredAssetSelector(_pool, asset => IsAssetAllowed(asset));
+        return await selector.GetAssets();
     }
 
-    public async Task<AssetResponseDto> GetAssetInfoById(Guid assetId) => await _immichApi.GetAssetInfoAsync(assetId, null, null);
+    public async Task<AssetResponseDto> GetAssetInfoById(Guid assetId)
+    {
+        AssetResponseDto? asset;
+
+        try
+        {
+            asset = await _immichApi.GetAssetInfoAsync(assetId, null, null);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Unable to retrieve metadata for asset {AssetId}.",
+                assetId
+            );
+
+            throw new AssetNotFoundException(
+                $"Asset '{assetId}' could not be verified.");
+        }
+
+        if (asset == null || !await IsAssetAllowed(asset))
+        {
+            throw new AssetNotFoundException(
+                $"Asset '{assetId}' is excluded or could not be verified.");
+        }
+
+        return asset;
+    }
 
     public async Task<IEnumerable<AssetFaceResponseDto>> GetAssetFacesById(Guid assetId) => await _immichApi.GetFacesAsync(assetId);
 
@@ -77,11 +161,33 @@ public class PooledImmichFrameLogic : IAccountImmichFrameLogic, IDisposable
 
     public async Task<AssetResponse> GetAsset(Guid id, AssetTypeEnum? assetType = null, string? rangeHeader = null)
     {
-        if (!assetType.HasValue)
+        AssetResponseDto? assetInfo = null;
+
+        if (AssetExclusionFilter.HasExclusions(AccountSettings) || !assetType.HasValue)
         {
-            var assetInfo = await _immichApi.GetAssetInfoAsync(id, null, null);
+            try
+            {
+                assetInfo = await _immichApi.GetAssetInfoAsync(id, null, null);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(
+                    ex,
+                    "Unable to retrieve metadata for asset {AssetId}. Asset rejected.",
+                    id
+                );
+
+                throw new AssetNotFoundException(
+                    $"Asset '{id}' could not be verified.");
+            }
+
             if (assetInfo == null)
-                throw new AssetNotFoundException($"Assetinfo for asset '{id}' was not found!");
+                throw new AssetNotFoundException($"Asset '{id}' was not found!");
+
+            if (!await IsAssetAllowed(assetInfo))
+                throw new AssetNotFoundException(
+                    $"Asset '{id}' is excluded or could not be verified.");
+
             assetType = assetInfo.Type;
         }
 

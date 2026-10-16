@@ -22,7 +22,11 @@ public class IcalCalendarService : ICalendarService
 
     public async Task<List<IAppointment>> GetAppointments()
     {
-        return await _appointmentCache.GetOrAddAsync("appointments", async () =>
+        var today = DateTime.Today;
+        var daysAhead = _serverSettings.CalendarDaysAhead;
+        var cacheKey = $"appointments-{today:yyyyMMdd}-{daysAhead}";
+
+        return await _appointmentCache.GetOrAddAsync(cacheKey, async () =>
         {
             var appointments = new List<IAppointment>();
 
@@ -51,7 +55,9 @@ public class IcalCalendarService : ICalendarService
             {
                 var calendar = Calendar.Load(ical);
 
-                appointments.AddRange(calendar.GetOccurrences(DateTime.Today, DateTime.Today.AddDays(1)).Select(x => x.ToAppointment()));
+                appointments.AddRange(
+                    CalendarWindow.GetAppointments(calendar, today, daysAhead)
+                );
             }
 
             return appointments;

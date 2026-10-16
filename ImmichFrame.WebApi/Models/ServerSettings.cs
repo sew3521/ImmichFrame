@@ -43,6 +43,7 @@ public class GeneralSettings : IGeneralSettings
     public int Interval { get; set; } = 45;
     public double TransitionDuration { get; set; } = 1;
     public bool ShowClock { get; set; } = true;
+    public bool EnableFrostedGlassUI { get; set; } = false;
     public string? ClockFormat { get; set; } = "hh:mm";
     public string? ClockDateFormat { get; set; } = "eee, MMM d";
     public bool ShowProgressBar { get; set; } = true;
@@ -65,6 +66,7 @@ public class GeneralSettings : IGeneralSettings
     public string Layout { get; set; } = "splitview";
     public int RenewImagesDuration { get; set; } = 30;
     public List<string> Webcalendars { get; set; } = new();
+    public int CalendarDaysAhead { get; set; } = 0;
     public int RefreshAlbumPeopleInterval { get; set; } = 12;
     public string? WeatherApiKey { get; set; } = string.Empty;
     public string? UnitSystem { get; set; } = "imperial";
@@ -73,7 +75,16 @@ public class GeneralSettings : IGeneralSettings
     public string? AuthenticationSecret { get; set; }
     public string? AdminPassword { get; set; }
 
-    public void Validate() { }
+    public void Validate()
+    {
+        if (CalendarDaysAhead < 0 || CalendarDaysAhead > 30)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(CalendarDaysAhead),
+                "CalendarDaysAhead must be between 0 and 30."
+            );
+        }
+    }
 }
 
 public class ServerAccountSettings : IAccountSettings
@@ -92,6 +103,7 @@ public class ServerAccountSettings : IAccountSettings
     public List<Guid> Albums { get; set; } = new();
     public List<Guid> ExcludedAlbums { get; set; } = new();
     public List<Guid> People { get; set; } = new();
+    public List<Guid> ExcludedPeople { get; set; } = new();
     public List<string> Tags { get; set; } = new();
     public int? Rating { get; set; }
 

@@ -1,3 +1,4 @@
+@import './frosted-glass.css';
 /* Pulls in Tailwind itself plus the @immich/ui design tokens. */
 @import '@immich/ui/theme/default.css';
 

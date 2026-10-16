@@ -66,6 +66,8 @@ export type GeneralSettings = {
     webhook?: string | null;
     authenticationSecret?: string | null;
     adminPassword?: string | null;
+    enableFrostedGlassUI?: boolean;
+    calendarDaysAhead?: number;
 };
 export type ServerAccountSettings = {
     immichServerUrl?: string | null;
@@ -83,6 +85,7 @@ export type ServerAccountSettings = {
     people?: string[] | null;
     tags?: string[] | null;
     rating?: number | null;
+    excludedPeople?: string[] | null;
 };
 export type ServerSettings = {
     General?: GeneralSettings;
@@ -294,6 +297,7 @@ export type ClientSettingsDto = {
     playAudio?: boolean;
     layout?: string | null;
     language?: string | null;
+    enableFrostedGlassUI?: boolean;
 };
 export type IWeather = {
     location?: string | null;

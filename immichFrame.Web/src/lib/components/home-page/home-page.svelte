@@ -483,7 +483,11 @@
 	});
 </script>
 
-<section class="fixed grid h-dvh-safe w-screen bg-black" class:cursor-none={!cursorVisible}>
+<section
+    class="fixed grid h-dvh-safe w-screen bg-black"
+    class:cursor-none={!cursorVisible}
+    class:frosted-glass-ui={$configStore.enableFrostedGlassUI === true}
+>
 	{#if error}
 		<ErrorElement {authError} message={errorMessage} />
 	{:else if displayingAssets}

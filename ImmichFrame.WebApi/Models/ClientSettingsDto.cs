@@ -9,6 +9,7 @@ public class ClientSettingsDto(IClientSettings settings) : IClientSettings
     public bool DownloadImages => settings.DownloadImages;
     public int RenewImagesDuration => settings.RenewImagesDuration;
     public bool ShowClock => settings.ShowClock;
+    public bool EnableFrostedGlassUI => settings.EnableFrostedGlassUI;
     public string? ClockFormat => settings.ClockFormat;
     public string? ClockDateFormat => settings.ClockDateFormat;
     public bool ShowPhotoDate => settings.ShowPhotoDate;

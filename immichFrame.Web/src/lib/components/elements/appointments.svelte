@@ -7,23 +7,40 @@
 
 	api.init();
 
-	function formatDates(startTime: string, endTime: string) {
-		let startDate = new Date(startTime);
-		let endDate = new Date(endTime);
-		let sameDay = startDate.getDate() == endDate.getDate();
+	function formatEventTime(startTime: string, endTime: string) {
+    const startDate = new Date(startTime);
+    const endDate = new Date(endTime);
+    const today = new Date();
 
-		let clockFormat = $configStore.clockFormat ?? 'HH:mm';
-		let clockDateFormat = $configStore.clockDateFormat ?? 'eee, MMM d';
-		let fullFormat = clockDateFormat + ' ' + clockFormat;
+    const isToday =
+        startDate.getFullYear() === today.getFullYear() &&
+        startDate.getMonth() === today.getMonth() &&
+        startDate.getDate() === today.getDate();
 
-		if (sameDay) {
-			return format(startDate, clockFormat) + ' - ' + format(endDate, clockFormat);
-		}
+    const sameDay =
+        startDate.getFullYear() === endDate.getFullYear() &&
+        startDate.getMonth() === endDate.getMonth() &&
+        startDate.getDate() === endDate.getDate();
 
-		return format(startDate, fullFormat) + ' - ' + format(endDate, fullFormat);
-	}
+    const configuredFormat = $configStore.clockFormat ?? 'HH:mm';
+    const is24Hour = configuredFormat.includes('H');
+    const timeFormat = is24Hour ? 'H:mm' : 'h:mm';
 
-	let appointments: api.IAppointment[] = $state() as api.IAppointment[];
+    const prefix = isToday ? '' : format(startDate, 'EEEE') + ' ';
+
+    if (sameDay) {
+        return prefix +
+            format(startDate, timeFormat) + ' - ' +
+            format(endDate, timeFormat);
+    }
+
+    return prefix +
+        format(startDate, timeFormat) + ' - ' +
+        format(endDate, 'EEEE') + ' ' +
+        format(endDate, timeFormat);
+}
+
+    let appointments: api.IAppointment[] = $state() as api.IAppointment[];
 
 	onMount(() => {
 		GetAppointments();
@@ -57,8 +74,9 @@
 		<div class="">
 			{#each appointments as appointment}
 				<div class="bg-gray-600/90 mb-2 text-left rounded-md p-3">
-					<p class="text-xs">
-						{formatDates(appointment.startTime ?? '', appointment.endTime ?? '')}
+
+					<p class="calendar-event-time text-xs">
+						{formatEventTime(appointment.startTime ?? '', appointment.endTime ?? '')}
 					</p>
 					{appointment.summary}
 					{#if appointment.description}

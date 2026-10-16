@@ -49,7 +49,13 @@ export const generalSections: SectionDef[] = [
 				type: 'select',
 				options: ['none', 'solid', 'transition', 'blur']
 			},
-			{ key: 'imageZoom', label: 'Image zoom', type: 'checkbox' },
+			{
+                                key: 'enableFrostedGlassUI',
+                                label: 'Enable Frosted Glass UI',
+                                type: 'checkbox',
+                                help: 'Use frosted-glass styling for calendar and photo information.'
+                        },
+                        { key: 'imageZoom', label: 'Image zoom', type: 'checkbox' },
 			{ key: 'imagePan', label: 'Image pan', type: 'checkbox' },
 			{ key: 'imageFill', label: 'Image fill', type: 'checkbox' },
 			{ key: 'playAudio', label: 'Play audio (videos)', type: 'checkbox' },
@@ -119,7 +125,15 @@ export const generalSections: SectionDef[] = [
 				label: 'Web calendars (one .ics URL per line)',
 				type: 'list',
 				help: 'Changes are picked up within ~15 minutes.'
-			}
+			},
+                        {
+                                key: 'calendarDaysAhead',
+                                label: 'Calendar days ahead',
+                                type: 'number',
+                                min: 0,
+                                max: 30,
+                                help: '0 = today only; 2 = today plus the next two days.'
+                        }
 		]
 	},
 	{
@@ -175,5 +189,6 @@ export const accountFields: FieldDef<ServerAccountSettings>[] = [
 	{ key: 'albums', label: 'Albums', type: 'guid-list', help: 'One ID per line.' },
 	{ key: 'excludedAlbums', label: 'Excluded albums', type: 'guid-list', help: 'One ID per line.' },
 	{ key: 'people', label: 'People', type: 'guid-list', help: 'One ID per line.' },
+    { key: 'excludedPeople', label: 'Excluded people', type: 'guid-list', help: 'Never display photos containing these recognized people. One ID per line.' },
 	{ key: 'tags', label: 'Tags', type: 'list', help: 'One tag per line.' }
 ];

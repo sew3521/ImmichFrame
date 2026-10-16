@@ -4,6 +4,7 @@ General:
   AdminPassword: AdminPassword_TEST
   DownloadImages: true
   RenewImagesDuration: 7
+  CalendarDaysAhead: 7
   Webcalendars:
   - Webcalendars_TEST
   RefreshAlbumPeopleInterval: 7
@@ -16,6 +17,7 @@ General:
   Webhook: Webhook_TEST
   Interval: 7
   TransitionDuration: 7.7
+  EnableFrostedGlassUI: true
   ShowClock: true
   ClockFormat: ClockFormat_TEST
   ClockDateFormat: ClockDateFormat_TEST
@@ -50,6 +52,7 @@ Accounts:
   Rating: 7
   Albums:
   - 00000000-0000-0000-0000-000000000001
+  ExcludedPeople: []
   ExcludedAlbums:
   - 00000000-0000-0000-0000-000000000001
   People:
