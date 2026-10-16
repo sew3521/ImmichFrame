@@ -210,6 +210,129 @@ namespace ImmichFrame.WebApi.Tests.Controllers
             });
         }
 
+
+        [Test]
+        public async Task PutSettings_StructuredCalendars_RoundTrips()
+        {
+            using var client = CreateAdminClient();
+
+            var firstId = Guid.NewGuid();
+            var secondId = Guid.NewGuid();
+
+            var body = ValidSettingsBody();
+
+            body["General"]!["Calendars"] = JsonNode.Parse(
+                System.Text.Json.JsonSerializer.Serialize(new[]
+                {
+                    new
+                    {
+                        Id = firstId,
+                        Name = "Family",
+                        Url = "https://example.com/family.ics",
+                        Color = "#E69B69",
+                        Enabled = true
+                    },
+                    new
+                    {
+                        Id = secondId,
+                        Name = "Personal",
+                        Url = "https://example.com/personal.ics",
+                        Color = "#6299EC",
+                        Enabled = false
+                    }
+                }));
+
+            var put = await client.PutAsJsonAsync(
+                "/api/Admin/Settings", body);
+
+            put.EnsureSuccessStatusCode();
+
+            var get = await client.GetAsync("/api/Admin/Settings");
+            get.EnsureSuccessStatusCode();
+
+            var saved = JsonNode.Parse(
+                await get.Content.ReadAsStringAsync())!;
+
+            var calendars = saved["General"]!["calendars"]!.AsArray();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(calendars.Count, Is.EqualTo(2));
+                Assert.That(
+                    (string)calendars[0]!["id"]!,
+                    Is.EqualTo(firstId.ToString()));
+                Assert.That(
+                    (string)calendars[0]!["name"]!,
+                    Is.EqualTo("Family"));
+                Assert.That(
+                    (string)calendars[0]!["color"]!,
+                    Is.EqualTo("#E69B69"));
+                Assert.That(
+                    (bool)calendars[1]!["enabled"]!,
+                    Is.False);
+            });
+
+            calendars[0]!["name"] = "Family Updated";
+            calendars[0]!["color"] = "#A88BDC";
+            calendars.RemoveAt(1);
+
+            var update = await client.PutAsJsonAsync(
+                "/api/Admin/Settings", saved);
+
+            update.EnsureSuccessStatusCode();
+
+            var updated = JsonNode.Parse(
+                await client.GetStringAsync("/api/Admin/Settings"))!;
+
+            var remaining = updated["General"]!["calendars"]!.AsArray();
+
+            Assert.That(remaining.Count, Is.EqualTo(1));
+            Assert.That(
+                (string)remaining[0]!["name"]!,
+                Is.EqualTo("Family Updated"));
+
+            remaining.Clear();
+
+            var clear = await client.PutAsJsonAsync(
+                "/api/Admin/Settings", updated);
+
+            clear.EnsureSuccessStatusCode();
+
+            var final = JsonNode.Parse(
+                await client.GetStringAsync("/api/Admin/Settings"))!;
+
+            Assert.That(
+                final["General"]!["calendars"]!.AsArray(),
+                Is.Empty);
+        }
+
+        [Test]
+        public async Task PutSettings_InvalidCalendar_Returns400()
+        {
+            using var client = CreateAdminClient();
+
+            var body = ValidSettingsBody();
+
+            body["General"]!["Calendars"] = JsonNode.Parse("""
+                [
+                    {
+                        "Id": "11111111-1111-1111-1111-111111111111",
+                        "Name": "Invalid Calendar",
+                        "Url": "file:///etc/passwd",
+                        "Color": "#6299EC",
+                        "Enabled": true
+                    }
+                ]
+                """);
+
+            var response = await client.PutAsJsonAsync(
+                "/api/Admin/Settings", body);
+
+            Assert.That(
+                response.StatusCode,
+                Is.EqualTo(HttpStatusCode.BadRequest));
+        }
+
         [Test]
         public async Task PutSettings_Invalid_Returns400()
         {

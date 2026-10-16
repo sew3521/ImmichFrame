@@ -131,4 +131,41 @@ public class CalendarWindowTests
         Assert.That(appointments, Is.Empty);
     }
 
+    [Test]
+    public void CalendarSourceMetadata_IsAppliedToAppointments()
+    {
+        var calendar = LoadCalendar(
+            "BEGIN:VEVENT\r\n" +
+            "UID:source-metadata@test\r\n" +
+            "DTSTAMP:20261001T120000Z\r\n" +
+            "DTSTART:20261016T150000Z\r\n" +
+            "DTEND:20261016T160000Z\r\n" +
+            "SUMMARY:Family Event\r\n" +
+            "END:VEVENT\r\n"
+        );
+
+        var source = new ImmichFrame.Core.Models.CalendarSource
+        {
+            Id = Guid.NewGuid(),
+            Name = "Family",
+            Color = "#E69B69",
+            Enabled = true
+        };
+
+        var appointments = CalendarWindow.GetAppointments(
+            calendar,
+            new DateTime(2026, 10, 16),
+            0,
+            source);
+
+        Assert.That(appointments, Has.Count.EqualTo(1));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(appointments[0].CalendarId, Is.EqualTo(source.Id));
+            Assert.That(appointments[0].CalendarName, Is.EqualTo("Family"));
+            Assert.That(appointments[0].CalendarColor, Is.EqualTo("#E69B69"));
+        });
+    }
+
 }

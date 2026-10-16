@@ -24,6 +24,7 @@
 	import SettingsSection from './settings-section.svelte';
 	import SettingField from './setting-field.svelte';
 	import AccountEditor from './account-editor.svelte';
+	import CalendarEditor from './calendar-editor.svelte';
 
 	type PageState = 'loading' | 'setup' | 'disabled' | 'login' | 'editor' | 'error';
 
@@ -112,6 +113,26 @@
 		pageState = 'login';
 	}
 
+	function addCalendar() {
+	    settings.General ??= {};
+	    settings.General.calendars = [
+	        ...(settings.General.calendars ?? []),
+	        {
+	            id: crypto.randomUUID(),
+	            name: `Calendar ${(settings.General.calendars?.length ?? 0) + 1}`,
+	            url: '',
+	            color: '#6299EC',
+	            enabled: true
+	        }
+	    ];
+	}
+
+	function removeCalendar(id: string | undefined) {
+	    settings.General ??= {};
+	    settings.General.calendars =
+	        (settings.General.calendars ?? []).filter((calendar) => calendar.id !== id);
+	}
+
 	function addAccount() {
 		settings.Accounts = [...(settings.Accounts ?? []), {}];
 	}
@@ -129,8 +150,18 @@
 		try {
 			const res = await adminApi.updateSettings($state.snapshot(settings) as ServerSettings);
 			if (res.status == 200) {
-				saveSuccess = true;
-				saveWarnings = res.data.warnings ?? [];
+			    saveWarnings = res.data.warnings ?? [];
+			    const refreshed = await adminApi.getSettings();
+			    if (refreshed.status == 200) {
+			        settings = {
+			            General: refreshed.data.General ?? {},
+			            Accounts: refreshed.data.Accounts ?? []
+			        };
+			        accountsVersion++;
+			        saveSuccess = true;
+			    } else {
+			        saveError = 'Settings saved, but reloading them failed.';
+			    }
 			} else if (res.status == 401) {
 				adminPasswordStore.set(null);
 				loginError = 'Session expired. Sign in again.';
@@ -225,6 +256,34 @@
 							</div>
 						</SettingsSection>
 					{/each}
+
+					<SettingsSection title="Calendars">
+					    <div class="flex flex-col gap-4">
+					        {#each settings.General?.calendars ?? [] as calendar, index (calendar.id)}
+					            <CalendarEditor
+					                {calendar}
+					                {index}
+					                onremove={() => removeCalendar(calendar.id)}
+					            />
+					        {/each}
+
+					        {#if !(settings.General?.calendars ?? []).length}
+					            <Text color="muted" size="small">
+					                No calendars configured. Add a calendar below.
+					            </Text>
+					        {/if}
+
+					        <Button
+					            leadingIcon={mdiPlus}
+					            variant="outline"
+					            color="secondary"
+					            class="w-fit"
+					            onclick={addCalendar}
+					        >
+					            Add calendar
+					        </Button>
+					    </div>
+					</SettingsSection>
 
 					<SettingsSection title="Accounts">
 						<div class="flex flex-col gap-4">

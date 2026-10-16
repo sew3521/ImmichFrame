@@ -73,7 +73,10 @@
 		<!-- <div class="text-4xl mx-8 font-bold">Appointments</div> -->
 		<div class="">
 			{#each appointments as appointment}
-				<div class="bg-gray-600/90 mb-2 text-left rounded-md p-3">
+				<div
+                                        class="calendar-event-card bg-gray-600/90 mb-2 text-left rounded-md p-3"
+                                        style:--calendar-accent={/^#[0-9a-fA-F]{6}$/.test(appointment.calendarColor ?? '') ? appointment.calendarColor : '#6299EC'}
+                                >
 
 					<p class="calendar-event-time text-xs">
 						{formatEventTime(appointment.startTime ?? '', appointment.endTime ?? '')}

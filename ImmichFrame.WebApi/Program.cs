@@ -84,6 +84,14 @@ builder.Services.AddSingleton<IAssetAccountTracker, BloomFilterAssetAccountTrack
 builder.Services.AddSingleton<Func<IList<IAccountImmichFrameLogic>, IAccountSelectionStrategy>>(srv =>
     accounts => ActivatorUtilities.CreateInstance<TotalAccountImagesSelectionStrategy>(srv, accounts));
 builder.Services.AddHttpClient(); // Ensures IHttpClientFactory is available
+
+// Calendar subscription URLs may contain private access tokens.
+// Do not automatically forward requests to redirect destinations.
+builder.Services.AddHttpClient("ImmichFrameCalendar")
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        AllowAutoRedirect = false
+    });
 builder.Services.AddImmichApiHttpClient(); // Client carrying the Immich API key; must not follow redirects
 
 builder.Services.AddTransient<Func<IAccountSettings, IAccountImmichFrameLogic>>(srv =>

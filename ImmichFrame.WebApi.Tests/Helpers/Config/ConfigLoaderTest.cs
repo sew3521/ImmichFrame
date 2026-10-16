@@ -107,7 +107,17 @@ public class ConfigLoaderTest
                     Assert.That(value, Is.Not.EqualTo(DateTime.MinValue), prop.Name);
                     break;
                 default:
-                    throw new NotImplementedException($"Not implemented for {prop.Name} as type ${type}");
+                    if (type.IsClass && type != typeof(string))
+                    {
+                        Assert.That(value, Is.Not.Null, prop.Name);
+                        VerifyProperties(value!, prop.Name + ".");
+                    }
+                    else
+                    {
+                        throw new NotImplementedException(
+                            $"Not implemented for {prop.Name} as type {type}");
+                    }
+                    break;
             }
         }
     }

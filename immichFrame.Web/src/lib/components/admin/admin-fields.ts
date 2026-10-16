@@ -120,12 +120,7 @@ export const generalSections: SectionDef[] = [
 				type: 'text',
 				placeholder: 'https://openweathermap.org/img/wn/{IconId}.png'
 			},
-			{
-				key: 'webcalendars',
-				label: 'Web calendars (one .ics URL per line)',
-				type: 'list',
-				help: 'Changes are picked up within ~15 minutes.'
-			},
+
                         {
                                 key: 'calendarDaysAhead',
                                 label: 'Calendar days ahead',

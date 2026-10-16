@@ -9,6 +9,24 @@ public static class CalendarWindow
     public static List<IAppointment> GetAppointments(
         Calendar calendar,
         DateTime today,
+        int daysAhead,
+        ImmichFrame.Core.Models.CalendarSource source)
+    {
+        var appointments = GetAppointments(calendar, today, daysAhead);
+
+        foreach (var appointment in appointments)
+        {
+            appointment.CalendarId = source.Id;
+            appointment.CalendarName = source.Name;
+            appointment.CalendarColor = source.Color;
+        }
+
+        return appointments;
+    }
+
+    public static List<IAppointment> GetAppointments(
+        Calendar calendar,
+        DateTime today,
         int daysAhead)
     {
         if (daysAhead < 0 || daysAhead > 30)

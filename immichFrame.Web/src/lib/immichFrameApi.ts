@@ -29,6 +29,13 @@ export type ProblemDetails = {
     instance?: string | null;
     [key: string]: any;
 };
+export type CalendarSource = {
+    id?: string;
+    name?: string;
+    url?: string;
+    color?: string;
+    enabled?: boolean;
+};
 export type GeneralSettings = {
     downloadImages?: boolean;
     language?: string | null;
@@ -68,6 +75,7 @@ export type GeneralSettings = {
     adminPassword?: string | null;
     enableFrostedGlassUI?: boolean;
     calendarDaysAhead?: number;
+    calendars?: CalendarSource[] | null;
 };
 export type ServerAccountSettings = {
     immichServerUrl?: string | null;
@@ -267,6 +275,9 @@ export type IAppointment = {
     summary?: string | null;
     description?: string | null;
     location?: string | null;
+    calendarId?: string;
+    calendarName?: string | null;
+    calendarColor?: string | null;
 };
 export type ClientSettingsDto = {
     interval?: number;

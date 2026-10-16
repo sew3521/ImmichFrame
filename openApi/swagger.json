@@ -1742,6 +1742,13 @@
             "format": "int32",
             "minimum": 0,
             "maximum": 30
+          },
+          "calendars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalendarSource"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1770,6 +1777,18 @@
             "nullable": true
           },
           "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "calendarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calendarName": {
+            "type": "string",
+            "nullable": true
+          },
+          "calendarColor": {
             "type": "string",
             "nullable": true
           }
@@ -2138,6 +2157,28 @@
               "nullable": true
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CalendarSource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

@@ -3,6 +3,7 @@ namespace ImmichFrame.Core.Interfaces
     public interface IServerBehaviorSettings
     {
         public List<string> Webcalendars { get; }
+        public List<ImmichFrame.Core.Models.CalendarSource>? Calendars { get; }
         public int CalendarDaysAhead { get; }
         public int RefreshAlbumPeopleInterval { get; }
         public string? WeatherApiKey { get; }

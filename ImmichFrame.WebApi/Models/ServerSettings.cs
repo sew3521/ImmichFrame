@@ -66,6 +66,7 @@ public class GeneralSettings : IGeneralSettings
     public string Layout { get; set; } = "splitview";
     public int RenewImagesDuration { get; set; } = 30;
     public List<string> Webcalendars { get; set; } = new();
+    public List<ImmichFrame.Core.Models.CalendarSource>? Calendars { get; set; }
     public int CalendarDaysAhead { get; set; } = 0;
     public int RefreshAlbumPeopleInterval { get; set; } = 12;
     public string? WeatherApiKey { get; set; } = string.Empty;
@@ -77,6 +78,8 @@ public class GeneralSettings : IGeneralSettings
 
     public void Validate()
     {
+        ImmichFrame.Core.Helpers.CalendarSourceValidator.Validate(Calendars);
+
         if (CalendarDaysAhead < 0 || CalendarDaysAhead > 30)
         {
             throw new ArgumentOutOfRangeException(

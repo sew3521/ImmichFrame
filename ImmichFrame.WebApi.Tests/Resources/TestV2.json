@@ -38,7 +38,16 @@
     "ImagePan": true,
     "ImageFill": true,
     "PlayAudio": true,
-    "Layout": "Layout_TEST"
+    "Layout": "Layout_TEST",
+    "Calendars": [
+      {
+        "Id": "11111111-2222-3333-4444-555555555555",
+        "Name": "Calendars.Name_TEST",
+        "Url": "Calendars.Url_TEST",
+        "Color": "Calendars.Color_TEST",
+        "Enabled": true
+      }
+    ]
   },
   "Accounts": [
     {
