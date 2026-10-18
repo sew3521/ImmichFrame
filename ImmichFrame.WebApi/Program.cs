@@ -16,14 +16,16 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 //log the version number
-var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "unknown";
+var version = AppVersion.Current;
 Console.WriteLine($@"
- _                     _      _    ______                        
-(_)                   (_)    | |   |  ___|                       
- _ _ __ ___  _ __ ___  _  ___| |__ | |_ _ __ __ _ _ __ ___   ___ 
+ _                     _      _    ______
+(_)                   (_)    | |   |  ___|
+ _ _ __ ___  _ __ ___  _  ___| |__ | |_ _ __ __ _ _ __ ___   ___
 | | '_ ` _ \| '_ ` _ \| |/ __| '_ \|  _| '__/ _` | '_ ` _ \ / _ \
 | | | | | | | | | | | | | (__| | | | | | | | (_| | | | | | |  __/
-|_|_| |_| |_|_| |_| |_|_|\___|_| |_\_| |_|  \__,_|_| |_| |_|\___| Version {version}");
+|_|_| |_| |_|_| |_| |_|_|\___|_| |_\_| |_|  \__,_|_| |_| |_|\___|
+                    WESCHE EDITION
+                     v{version}");
 Console.WriteLine();
 
 // Add services to the container.

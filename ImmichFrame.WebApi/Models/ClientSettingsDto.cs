@@ -10,6 +10,7 @@ public class ClientSettingsDto(IClientSettings settings) : IClientSettings
     public int RenewImagesDuration => settings.RenewImagesDuration;
     public bool ShowClock => settings.ShowClock;
     public bool EnableFrostedGlassUI => settings.EnableFrostedGlassUI;
+    public int? FrostedGlassOpacity => settings.FrostedGlassOpacity;
     public string? ClockFormat => settings.ClockFormat;
     public string? ClockDateFormat => settings.ClockDateFormat;
     public bool ShowPhotoDate => settings.ShowPhotoDate;

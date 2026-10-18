@@ -487,6 +487,7 @@
     class="fixed grid h-dvh-safe w-screen bg-black"
     class:cursor-none={!cursorVisible}
     class:frosted-glass-ui={$configStore.enableFrostedGlassUI === true}
+    style:--glass-surface={`rgba(255, 255, 255, ${($configStore.frostedGlassOpacity ?? 45) / 100})`}
 >
 	{#if error}
 		<ErrorElement {authError} message={errorMessage} />

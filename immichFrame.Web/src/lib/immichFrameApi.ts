@@ -14,6 +14,8 @@ const oazapfts = Oazapfts.runtime(defaults);
 export const servers = {};
 export type AdminStatusDto = {
     state?: AdminUiState;
+    /** Version reported by the running ImmichFrame backend. */
+    version?: string;
 };
 export type AdminSetupDto = {
     adminPassword?: string | null;
@@ -76,6 +78,8 @@ export type GeneralSettings = {
     enableFrostedGlassUI?: boolean;
     calendarDaysAhead?: number;
     calendars?: CalendarSource[] | null;
+    /** Frosted Glass opacity percentage (10-95). Defaults to 45%. */
+    frostedGlassOpacity?: number | null;
 };
 export type ServerAccountSettings = {
     immichServerUrl?: string | null;
@@ -309,6 +313,8 @@ export type ClientSettingsDto = {
     layout?: string | null;
     language?: string | null;
     enableFrostedGlassUI?: boolean;
+    /** Frosted Glass opacity percentage (10-95). Defaults to 45%. */
+    frostedGlassOpacity?: number | null;
 };
 export type IWeather = {
     location?: string | null;
@@ -317,6 +323,21 @@ export type IWeather = {
     temperatureUnit?: string | null;
     description?: string | null;
     iconId?: string | null;
+};
+export type CalendarHealthStatus = {
+    calendarId?: string;
+    calendarName?: string;
+    calendarColor?: string;
+    available?: boolean;
+    usingFallback?: boolean;
+};
+export type CalendarHealthStatusRead = {
+    calendarId?: string;
+    calendarName?: string;
+    calendarColor?: string;
+    available?: boolean;
+    usingFallback?: boolean;
+    showWarning?: boolean;
 };
 export function getAdminStatus(opts?: Oazapfts.RequestOpts) {
     return oazapfts.fetchJson<{
@@ -515,6 +536,14 @@ export function getWeather({ clientIdentifier }: {
     }>(`/api/Weather${QS.query(QS.explode({
         clientIdentifier
     }))}`, {
+        ...opts
+    });
+}
+export function getCalendarStatuses(opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: CalendarHealthStatusRead[];
+    }>("/api/Calendar/Status", {
         ...opts
     });
 }

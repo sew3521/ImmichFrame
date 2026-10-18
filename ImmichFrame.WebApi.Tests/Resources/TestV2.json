@@ -47,7 +47,8 @@
         "Color": "Calendars.Color_TEST",
         "Enabled": true
       }
-    ]
+    ],
+    "FrostedGlassOpacity": 45
   },
   "Accounts": [
     {

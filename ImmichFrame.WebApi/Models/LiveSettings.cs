@@ -25,6 +25,7 @@ public class LiveGeneralSettings(ISettingsProvider _provider) : IGeneralSettings
     public int RenewImagesDuration => Current.RenewImagesDuration;
     public bool ShowClock => Current.ShowClock;
     public bool EnableFrostedGlassUI => Current.EnableFrostedGlassUI;
+    public int? FrostedGlassOpacity => Current.FrostedGlassOpacity;
     public string? ClockFormat => Current.ClockFormat;
     public string? ClockDateFormat => Current.ClockDateFormat;
     public bool ShowPhotoDate => Current.ShowPhotoDate;

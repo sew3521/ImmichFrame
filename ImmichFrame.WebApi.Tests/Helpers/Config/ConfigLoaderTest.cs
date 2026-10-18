@@ -95,7 +95,11 @@ public class ConfigLoaderTest
                     Assert.That(value, Is.EqualTo(true), prop.Name);
                     break;
                 case var t when t == typeof(int):
-                    Assert.That(value, Is.EqualTo(7), prop.Name);
+                    Assert.That(
+                        value,
+                        Is.EqualTo(prop.Name == "FrostedGlassOpacity" ? 45 : 7),
+                        prop.Name
+                    );
                     break;
                 case var t when t == typeof(double):
                     Assert.That(value, Is.EqualTo(7.7d), prop.Name);

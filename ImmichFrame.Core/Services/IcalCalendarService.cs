@@ -3,6 +3,7 @@ using System.Text;
 using Ical.Net;
 using ImmichFrame.Core.Helpers;
 using ImmichFrame.Core.Interfaces;
+using ImmichFrame.Core.Models;
 using ImmichFrame.WebApi.Helpers;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -16,15 +17,44 @@ public class IcalCalendarService : ICalendarService
         new MemoryCache(new MemoryCacheOptions());
 
     private readonly SemaphoreSlim _cacheLock = new(1, 1);
+    private readonly CalendarFallbackCache _fallbackCache = new();
+    private readonly TimeSpan _successCacheDuration;
+    private readonly TimeSpan _failureCacheDuration;
 
-    public IcalCalendarService(IGeneralSettings serverSettings, ILogger<IcalCalendarService> logger, IHttpClientFactory httpClientFactory)
+    public IcalCalendarService(
+        IGeneralSettings serverSettings,
+        ILogger<IcalCalendarService> logger,
+        IHttpClientFactory httpClientFactory)
+        : this(
+            serverSettings,
+            logger,
+            httpClientFactory,
+            TimeSpan.FromMinutes(15),
+            TimeSpan.FromMinutes(1))
+    {
+    }
+
+    public IcalCalendarService(
+        IGeneralSettings serverSettings,
+        ILogger<IcalCalendarService> logger,
+        IHttpClientFactory httpClientFactory,
+        TimeSpan successCacheDuration,
+        TimeSpan failureCacheDuration)
     {
         _logger = logger;
         _serverSettings = serverSettings;
         _httpClientFactory = httpClientFactory;
+        _successCacheDuration = successCacheDuration;
+        _failureCacheDuration = failureCacheDuration;
     }
 
     public async Task<List<IAppointment>> GetAppointments()
+    {
+        var result = await GetCalendarResult();
+        return result.Appointments;
+    }
+
+    public async Task<CalendarFetchResult> GetCalendarResult()
     {
         var today = DateTime.Today;
         var daysAhead = _serverSettings.CalendarDaysAhead;
@@ -49,7 +79,7 @@ public class IcalCalendarService : ICalendarService
         if (_appointmentCache.TryGetValue(cacheKey, out CalendarFetchResult? cached)
             && cached != null)
         {
-            return cached.Appointments;
+            return cached;
         }
 
         await _cacheLock.WaitAsync();
@@ -58,12 +88,35 @@ public class IcalCalendarService : ICalendarService
             if (_appointmentCache.TryGetValue(cacheKey, out cached)
                 && cached != null)
             {
-                return cached.Appointments;
+                return cached;
             }
 
+            _fallbackCache.RetainOnly(sources);
+
             var appointments = new List<IAppointment>();
+            var statuses = new List<CalendarHealthStatus>();
             var complete = true;
             var client = _httpClientFactory.CreateClient("ImmichFrameCalendar");
+
+            void RecordFailure(CalendarSource source)
+            {
+                var fallback = _fallbackCache.GetFallback(
+                    source, today, daysAhead, DateTimeOffset.UtcNow);
+
+                if (fallback != null)
+                {
+                    appointments.AddRange(fallback);
+                }
+
+                statuses.Add(new CalendarHealthStatus
+                {
+                    CalendarId = source.Id,
+                    CalendarName = source.Name,
+                    CalendarColor = source.Color,
+                    Available = false,
+                    UsingFallback = fallback != null
+                });
+            }
 
             foreach (var source in sources)
             {
@@ -73,6 +126,7 @@ public class IcalCalendarService : ICalendarService
                 if (ical == null)
                 {
                     complete = false;
+                    RecordFailure(source);
                     continue;
                 }
 
@@ -80,10 +134,27 @@ public class IcalCalendarService : ICalendarService
                 {
                     var calendar = Calendar.Load(ical);
 
-                    appointments.AddRange(
+                    var sourceAppointments =
                         CalendarWindow.GetAppointments(
-                            calendar, today, daysAhead, source)
-                    );
+                            calendar, today, daysAhead, source);
+
+                    _fallbackCache.Store(
+                        source,
+                        today,
+                        daysAhead,
+                        sourceAppointments,
+                        DateTimeOffset.UtcNow);
+
+                    appointments.AddRange(sourceAppointments);
+
+                    statuses.Add(new CalendarHealthStatus
+                    {
+                        CalendarId = source.Id,
+                        CalendarName = source.Name,
+                        CalendarColor = source.Color,
+                        Available = true,
+                        UsingFallback = false
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -93,25 +164,29 @@ public class IcalCalendarService : ICalendarService
                         "Calendar {CalendarId} could not be parsed: {ErrorType}.",
                         source.Id,
                         ex.GetType().Name);
+
+                    RecordFailure(source);
                 }
             }
 
             var result = new CalendarFetchResult
             {
-                Appointments = appointments
+                Appointments = CalendarEventDeduplicator
+                    .Deduplicate(appointments)
                     .OrderBy(x => x.StartTime)
                     .ToList(),
-                Complete = complete
+                Complete = complete,
+                CalendarStatuses = statuses
             };
 
             _appointmentCache.Set(
                 cacheKey,
                 result,
                 complete
-                    ? TimeSpan.FromMinutes(15)
-                    : TimeSpan.FromMinutes(1));
+                    ? _successCacheDuration
+                    : _failureCacheDuration);
 
-            return result.Appointments;
+            return result;
         }
         finally
         {

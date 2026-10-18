@@ -883,6 +883,29 @@
           }
         }
       }
+    },
+    "/api/Calendar/Status": {
+      "get": {
+        "tags": [
+          "Calendar"
+        ],
+        "operationId": "GetCalendarStatuses",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarHealthStatus"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -919,6 +942,11 @@
         "properties": {
           "state": {
             "$ref": "#/components/schemas/AdminUiState"
+          },
+          "version": {
+            "type": "string",
+            "nullable": false,
+            "description": "Version reported by the running ImmichFrame backend."
           }
         },
         "additionalProperties": false
@@ -1445,6 +1473,14 @@
           },
           "enableFrostedGlassUI": {
             "type": "boolean"
+          },
+          "frostedGlassOpacity": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 10,
+            "maximum": 95,
+            "description": "Frosted Glass opacity percentage (10-95). Defaults to 45%."
           }
         },
         "additionalProperties": false
@@ -1749,6 +1785,14 @@
               "$ref": "#/components/schemas/CalendarSource"
             },
             "nullable": true
+          },
+          "frostedGlassOpacity": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 10,
+            "maximum": 95,
+            "description": "Frosted Glass opacity percentage (10-95). Defaults to 45%."
           }
         },
         "additionalProperties": false
@@ -2179,6 +2223,34 @@
           },
           "enabled": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CalendarHealthStatus": {
+        "type": "object",
+        "properties": {
+          "calendarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calendarName": {
+            "type": "string",
+            "nullable": false
+          },
+          "calendarColor": {
+            "type": "string",
+            "nullable": false
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "usingFallback": {
+            "type": "boolean"
+          },
+          "showWarning": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false

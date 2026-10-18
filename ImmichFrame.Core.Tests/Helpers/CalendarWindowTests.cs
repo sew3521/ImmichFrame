@@ -168,4 +168,27 @@ public class CalendarWindowTests
         });
     }
 
+
+    [Test]
+    public void MultiDayEvent_StartedBeforeWindow_RemainsVisible()
+    {
+        var calendar = LoadCalendar(
+            "BEGIN:VEVENT\r\n" +
+            "UID:on-call@test\r\n" +
+            "DTSTAMP:20261001T120000Z\r\n" +
+            "DTSTART;VALUE=DATE:20261013\r\n" +
+            "DTEND;VALUE=DATE:20261021\r\n" +
+            "SUMMARY:On Call\r\n" +
+            "END:VEVENT\r\n"
+        );
+
+        var today = new DateTime(2026, 10, 17);
+
+        var appointments = CalendarWindow.GetAppointments(
+            calendar, today, 2);
+
+        Assert.That(appointments, Has.Count.EqualTo(1));
+        Assert.That(appointments[0].Summary, Is.EqualTo("On Call"));
+    }
+
 }

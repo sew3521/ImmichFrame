@@ -40,7 +40,8 @@
         format(endDate, timeFormat);
 }
 
-    let appointments: api.IAppointment[] = $state() as api.IAppointment[];
+    let appointments: api.IAppointment[] = $state([]);
+    let calendarStatuses: api.CalendarHealthStatusRead[] = $state([]);
 
 	onMount(() => {
 		GetAppointments();
@@ -51,18 +52,34 @@
 		};
 	});
 
-	async function GetAppointments() {
-		let appointmentRequest = await api.getAppointments({
-			clientIdentifier: $clientIdentifierStore
-		});
-		if (appointmentRequest.status == 200) {
-			appointments = appointmentRequest.data;
+    async function GetAppointments() {
+        const results = await Promise.allSettled([
+            api.getAppointments({
+                clientIdentifier: $clientIdentifierStore
+            }),
+            api.getCalendarStatuses()
+        ]);
 
-			appointments = appointmentRequest.data.sort((a, b) => {
-				return new Date(a.startTime ?? '').getTime() - new Date(b.startTime ?? '').getTime();
-			});
-		}
-	}
+        const [appointmentsResult, statusesResult] = results;
+
+        if (appointmentsResult.status === 'fulfilled' &&
+            appointmentsResult.value.status === 200) {
+            appointments = [...appointmentsResult.value.data].sort((a, b) =>
+                new Date(a.startTime ?? '').getTime() -
+                new Date(b.startTime ?? '').getTime()
+            );
+        } else {
+            console.warn('Unable to refresh calendar appointments.');
+        }
+
+        if (statusesResult.status === 'fulfilled' &&
+            statusesResult.value.status === 200) {
+            calendarStatuses = statusesResult.value.data;
+        } else {
+            console.warn('Unable to refresh calendar health statuses.');
+        }
+    }
+
 </script>
 
 {#if appointments}
@@ -87,6 +104,20 @@
 					{/if}
 				</div>
 			{/each}
+
+                        {#each calendarStatuses.filter((status) => status.showWarning) as status (status.calendarId)}
+                            <div
+                                class="calendar-event-card bg-gray-600/90 mb-2 text-left rounded-md p-3"
+                                style:--calendar-accent={/^#[0-9a-fA-F]{6}$/.test(status.calendarColor ?? '') ? status.calendarColor : '#6299EC'}
+                            >
+                                <p class="font-semibold">
+                                    {status.calendarName} unavailable
+                                </p>
+                                <p class="text-xs font-light">
+                                    Unable to load events. Retrying automatically.
+                                </p>
+                            </div>
+                        {/each}
 		</div>
 	</div>
 {/if}

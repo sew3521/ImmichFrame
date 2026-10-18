@@ -24,6 +24,7 @@ General:
   Interval: 7
   TransitionDuration: 7.7
   EnableFrostedGlassUI: true
+  FrostedGlassOpacity: 45
   ShowClock: true
   ClockFormat: ClockFormat_TEST
   ClockDateFormat: ClockDateFormat_TEST

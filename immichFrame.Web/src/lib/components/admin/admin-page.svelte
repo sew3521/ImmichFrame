@@ -25,11 +25,13 @@
 	import SettingField from './setting-field.svelte';
 	import AccountEditor from './account-editor.svelte';
 	import CalendarEditor from './calendar-editor.svelte';
+        import FrostedGlassOpacity from './frosted-glass-opacity.svelte';
         import { generateCalendarId } from '$lib/utils/calendar-uuid';
 
 	type PageState = 'loading' | 'setup' | 'disabled' | 'login' | 'editor' | 'error';
 
 	let pageState: PageState = $state('loading');
+	let serverVersion = $state('');
 	let settings: ServerSettings = $state({ General: {}, Accounts: [] });
 	let loginError = $state('');
 	let setupError = $state('');
@@ -50,6 +52,7 @@
 				pageState = 'error';
 				return;
 			}
+			serverVersion = res.data.version ?? '';
 			if (res.data.state === AdminUiState.Setup) {
 				pageState = 'setup';
 				return;
@@ -187,7 +190,7 @@
 		<AppShellHeader>
 			<div class="w-full p-4">
 				<div class="mx-auto flex w-full max-w-3xl items-center justify-between gap-4">
-					<AdminBrand subtitle="Server settings" />
+					<AdminBrand subtitle="Server settings" version={serverVersion} />
 
 					<div class="flex items-center gap-2">
 						<Button leadingIcon={mdiContentSave} loading={saving} onclick={save}>
@@ -253,6 +256,9 @@
 							<div class="grid gap-x-8 sm:grid-cols-2">
 								{#each section.fields as field (field.key)}
 									<SettingField {field} target={settings.General ?? {}} />
+									{#if field.key === 'enableFrostedGlassUI'}
+									    <FrostedGlassOpacity target={settings.General ?? {}} />
+									{/if}
 								{/each}
 							</div>
 						</SettingsSection>

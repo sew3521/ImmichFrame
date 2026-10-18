@@ -8,6 +8,7 @@ namespace ImmichFrame.Core.Interfaces
         public int RenewImagesDuration { get; }
         public bool ShowClock { get; }
         public bool EnableFrostedGlassUI { get; }
+        public int? FrostedGlassOpacity { get; }
         public string? ClockFormat { get; }
         public string? ClockDateFormat { get; }
         public bool ShowPhotoDate { get; }

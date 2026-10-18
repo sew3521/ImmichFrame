@@ -18,6 +18,13 @@ namespace ImmichFrame.WebApi.Controllers
             _calendarService = calendarService;
         }
 
+        [HttpGet("Status", Name = "GetCalendarStatuses")]
+        public async Task<List<ImmichFrame.Core.Models.CalendarHealthStatus>> GetStatuses()
+        {
+            var result = await _calendarService.GetCalendarResult();
+            return result.CalendarStatuses;
+        }
+
         [HttpGet(Name = "GetAppointments")]
         public async Task<List<IAppointment>> GetAppointments(string clientIdentifier = "")
         {

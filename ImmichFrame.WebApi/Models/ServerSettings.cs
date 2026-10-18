@@ -44,6 +44,7 @@ public class GeneralSettings : IGeneralSettings
     public double TransitionDuration { get; set; } = 1;
     public bool ShowClock { get; set; } = true;
     public bool EnableFrostedGlassUI { get; set; } = false;
+    public int? FrostedGlassOpacity { get; set; } = 45;
     public string? ClockFormat { get; set; } = "hh:mm";
     public string? ClockDateFormat { get; set; } = "eee, MMM d";
     public bool ShowProgressBar { get; set; } = true;
@@ -79,6 +80,14 @@ public class GeneralSettings : IGeneralSettings
     public void Validate()
     {
         ImmichFrame.Core.Helpers.CalendarSourceValidator.Validate(Calendars);
+
+        if (FrostedGlassOpacity is < 10 or > 95)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(FrostedGlassOpacity),
+                "FrostedGlassOpacity must be between 10 and 95 percent."
+            );
+        }
 
         if (CalendarDaysAhead < 0 || CalendarDaysAhead > 30)
         {

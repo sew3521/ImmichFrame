@@ -79,6 +79,44 @@ namespace ImmichFrame.WebApi.Tests.Controllers
             response.EnsureSuccessStatusCode();
             var json = JsonNode.Parse(await response.Content.ReadAsStringAsync())!;
             Assert.That((string)json["state"]!, Is.EqualTo("login"));
+
+            var version = (string?)json["version"];
+
+            Assert.That(version, Is.Not.Null.And.Not.Empty);
+            Assert.That(
+                Version.TryParse(version, out _),
+                Is.True,
+                "Admin status should report a valid application version."
+            );
+        }
+
+
+        [Test]
+        public async Task GetStatus_UsesAppVersionEnvironmentVariable()
+        {
+            var previous = Environment.GetEnvironmentVariable("APP_VERSION");
+
+            try
+            {
+                Environment.SetEnvironmentVariable("APP_VERSION", "2.0.0.0");
+
+                using var client = _factory.CreateClient();
+                var response = await client.GetAsync("/api/Admin/Status");
+
+                response.EnsureSuccessStatusCode();
+
+                var json = JsonNode.Parse(
+                    await response.Content.ReadAsStringAsync())!;
+
+                Assert.That(
+                    (string?)json["version"],
+                    Is.EqualTo("2.0.0.0")
+                );
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("APP_VERSION", previous);
+            }
         }
 
         [Test]
