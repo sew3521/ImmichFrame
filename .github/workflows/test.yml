@@ -8,6 +8,9 @@ on:
 
 jobs:
   test:
+    env:
+      TZ: America/Chicago
+
     runs-on: ubuntu-latest
 
     steps:
