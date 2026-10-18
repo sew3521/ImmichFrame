@@ -4,6 +4,7 @@
     "AdminPassword": "AdminPassword_TEST",
     "DownloadImages": true,
     "RenewImagesDuration": 7,
+    "CalendarDaysAhead": 7,
     "Webcalendars": [
       "Webcalendars_TEST"
     ],
@@ -17,6 +18,7 @@
     "Webhook": "Webhook_TEST",
     "Interval": 7,
     "TransitionDuration": 7.7,
+    "EnableFrostedGlassUI": true,
     "ShowClock": true,
     "ClockFormat": "ClockFormat_TEST",
     "ClockDateFormat": "ClockDateFormat_TEST",
@@ -36,7 +38,17 @@
     "ImagePan": true,
     "ImageFill": true,
     "PlayAudio": true,
-    "Layout": "Layout_TEST"
+    "Layout": "Layout_TEST",
+    "Calendars": [
+      {
+        "Id": "11111111-2222-3333-4444-555555555555",
+        "Name": "Calendars.Name_TEST",
+        "Url": "Calendars.Url_TEST",
+        "Color": "Calendars.Color_TEST",
+        "Enabled": true
+      }
+    ],
+    "FrostedGlassOpacity": 45
   },
   "Accounts": [
     {
@@ -54,6 +66,7 @@
       "Albums": [
         "00000000-0000-0000-0000-000000000001"
       ],
+      "ExcludedPeople": [],
       "ExcludedAlbums": [
         "00000000-0000-0000-0000-000000000001"
       ],

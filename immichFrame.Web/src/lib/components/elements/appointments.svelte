@@ -7,23 +7,41 @@
 
 	api.init();
 
-	function formatDates(startTime: string, endTime: string) {
-		let startDate = new Date(startTime);
-		let endDate = new Date(endTime);
-		let sameDay = startDate.getDate() == endDate.getDate();
+	function formatEventTime(startTime: string, endTime: string) {
+    const startDate = new Date(startTime);
+    const endDate = new Date(endTime);
+    const today = new Date();
 
-		let clockFormat = $configStore.clockFormat ?? 'HH:mm';
-		let clockDateFormat = $configStore.clockDateFormat ?? 'eee, MMM d';
-		let fullFormat = clockDateFormat + ' ' + clockFormat;
+    const isToday =
+        startDate.getFullYear() === today.getFullYear() &&
+        startDate.getMonth() === today.getMonth() &&
+        startDate.getDate() === today.getDate();
 
-		if (sameDay) {
-			return format(startDate, clockFormat) + ' - ' + format(endDate, clockFormat);
-		}
+    const sameDay =
+        startDate.getFullYear() === endDate.getFullYear() &&
+        startDate.getMonth() === endDate.getMonth() &&
+        startDate.getDate() === endDate.getDate();
 
-		return format(startDate, fullFormat) + ' - ' + format(endDate, fullFormat);
-	}
+    const configuredFormat = $configStore.clockFormat ?? 'HH:mm';
+    const is24Hour = configuredFormat.includes('H');
+    const timeFormat = is24Hour ? 'H:mm' : 'h:mm';
 
-	let appointments: api.IAppointment[] = $state() as api.IAppointment[];
+    const prefix = isToday ? '' : format(startDate, 'EEEE') + ' ';
+
+    if (sameDay) {
+        return prefix +
+            format(startDate, timeFormat) + ' - ' +
+            format(endDate, timeFormat);
+    }
+
+    return prefix +
+        format(startDate, timeFormat) + ' - ' +
+        format(endDate, 'EEEE') + ' ' +
+        format(endDate, timeFormat);
+}
+
+    let appointments: api.IAppointment[] = $state([]);
+    let calendarStatuses: api.CalendarHealthStatusRead[] = $state([]);
 
 	onMount(() => {
 		GetAppointments();
@@ -34,18 +52,34 @@
 		};
 	});
 
-	async function GetAppointments() {
-		let appointmentRequest = await api.getAppointments({
-			clientIdentifier: $clientIdentifierStore
-		});
-		if (appointmentRequest.status == 200) {
-			appointments = appointmentRequest.data;
+    async function GetAppointments() {
+        const results = await Promise.allSettled([
+            api.getAppointments({
+                clientIdentifier: $clientIdentifierStore
+            }),
+            api.getCalendarStatuses()
+        ]);
 
-			appointments = appointmentRequest.data.sort((a, b) => {
-				return new Date(a.startTime ?? '').getTime() - new Date(b.startTime ?? '').getTime();
-			});
-		}
-	}
+        const [appointmentsResult, statusesResult] = results;
+
+        if (appointmentsResult.status === 'fulfilled' &&
+            appointmentsResult.value.status === 200) {
+            appointments = [...appointmentsResult.value.data].sort((a, b) =>
+                new Date(a.startTime ?? '').getTime() -
+                new Date(b.startTime ?? '').getTime()
+            );
+        } else {
+            console.warn('Unable to refresh calendar appointments.');
+        }
+
+        if (statusesResult.status === 'fulfilled' &&
+            statusesResult.value.status === 200) {
+            calendarStatuses = statusesResult.value.data;
+        } else {
+            console.warn('Unable to refresh calendar health statuses.');
+        }
+    }
+
 </script>
 
 {#if appointments}
@@ -56,9 +90,13 @@
 		<!-- <div class="text-4xl mx-8 font-bold">Appointments</div> -->
 		<div class="">
 			{#each appointments as appointment}
-				<div class="bg-gray-600/90 mb-2 text-left rounded-md p-3">
-					<p class="text-xs">
-						{formatDates(appointment.startTime ?? '', appointment.endTime ?? '')}
+				<div
+                                        class="calendar-event-card bg-gray-600/90 mb-2 text-left rounded-md p-3"
+                                        style:--calendar-accent={/^#[0-9a-fA-F]{6}$/.test(appointment.calendarColor ?? '') ? appointment.calendarColor : '#6299EC'}
+                                >
+
+					<p class="calendar-event-time text-xs">
+						{formatEventTime(appointment.startTime ?? '', appointment.endTime ?? '')}
 					</p>
 					{appointment.summary}
 					{#if appointment.description}
@@ -66,6 +104,20 @@
 					{/if}
 				</div>
 			{/each}
+
+                        {#each calendarStatuses.filter((status) => status.showWarning) as status (status.calendarId)}
+                            <div
+                                class="calendar-event-card bg-gray-600/90 mb-2 text-left rounded-md p-3"
+                                style:--calendar-accent={/^#[0-9a-fA-F]{6}$/.test(status.calendarColor ?? '') ? status.calendarColor : '#6299EC'}
+                            >
+                                <p class="font-semibold">
+                                    {status.calendarName} unavailable
+                                </p>
+                                <p class="text-xs font-light">
+                                    Unable to load events. Retrying automatically.
+                                </p>
+                            </div>
+                        {/each}
 		</div>
 	</div>
 {/if}

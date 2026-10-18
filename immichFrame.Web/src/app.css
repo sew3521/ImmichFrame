@@ -1,3 +1,4 @@
+@import './frosted-glass.css';
 /* Pulls in Tailwind itself plus the @immich/ui design tokens. */
 @import '@immich/ui/theme/default.css';
 
@@ -125,4 +126,9 @@ img.icon-weather {
 	vertical-align: middle;
 	margin-top: -8px; /* adjust icon top to line up with text */
 	order: 1;
+}
+
+/* Calendar-specific event accent, independent of visual theme. */
+#appointments .calendar-event-card {
+  border-left: 7px solid var(--calendar-accent, #6299EC);
 }

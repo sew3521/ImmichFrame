@@ -28,6 +28,16 @@ public static class SearchFilters
         return new IdsFilter { None = excluded };
     }
 
+    public static IdsFilter? ExcludedPeople(IAccountSettings settings)
+    {
+        if (settings.ExcludedPeople is not { Count: > 0 } excluded)
+        {
+            return null;
+        }
+
+        return new IdsFilter { None = excluded };
+    }
+
     public static EnumFilterAssetType Types(IAccountSettings settings)
     {
         var types = new List<AssetTypeEnum> { AssetTypeEnum.IMAGE };
@@ -53,6 +63,7 @@ public static class SearchFilters
             Visibility = Visibility(settings),
             Type = Types(settings),
             AlbumIds = ExcludedAlbums(settings),
+            PersonIds = ExcludedPeople(settings),
             TakenAt = TakenAt(settings),
             Rating = Rating(settings)
         };

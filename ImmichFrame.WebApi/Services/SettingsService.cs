@@ -1,5 +1,6 @@
 using System.Text.Json;
 using ImmichFrame.Core.Exceptions;
+using ImmichFrame.Core.Helpers;
 using ImmichFrame.Core.Interfaces;
 using ImmichFrame.WebApi.Database;
 using ImmichFrame.WebApi.Helpers.Config;
@@ -88,6 +89,21 @@ public class SettingsService : ISettingsProvider
         {
             LogIgnoredFileConfig();
             var raw = Deserialize(row.Json);
+
+            var migrated = !string.IsNullOrEmpty(row.Json) &&
+                !row.Json.Contains("\"Calendars\"", StringComparison.OrdinalIgnoreCase);
+
+            if (migrated)
+            {
+                row.Json = Serialize(raw);
+                row.UpdatedAtUtc = DateTime.UtcNow;
+                row.Version++;
+                await db.SaveChangesAsync();
+
+                _logger.LogInformation(
+                    "Migrated legacy calendar settings to structured calendar entries.");
+            }
+
             _raw = raw;
             _current = ValidateOrSafeMode(raw);
             _logger.LogInformation("Loaded settings from database (last updated {updatedAt:u})", row.UpdatedAtUtc);
@@ -318,6 +334,12 @@ public class SettingsService : ISettingsProvider
     {
         settings.GeneralSettingsImpl ??= new GeneralSettings();
         settings.AccountsImpl ??= new List<ServerAccountSettings>();
+
+        settings.GeneralSettingsImpl.Calendars =
+            CalendarSettingsMigration.Resolve(
+                settings.GeneralSettingsImpl.Calendars,
+                settings.GeneralSettingsImpl.Webcalendars
+            );
     }
 
     internal static string Serialize(object? value) => JsonSerializer.Serialize(value);

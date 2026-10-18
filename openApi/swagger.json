@@ -164,7 +164,7 @@
         },
         "security": [
           {
-            "ImmichFrameAdminScheme": [ ]
+            "ImmichFrameAdminScheme": []
           }
         ]
       },
@@ -246,7 +246,7 @@
         },
         "security": [
           {
-            "ImmichFrameAdminScheme": [ ]
+            "ImmichFrameAdminScheme": []
           }
         ]
       }
@@ -310,7 +310,7 @@
         },
         "security": [
           {
-            "ImmichFrameAdminScheme": [ ]
+            "ImmichFrameAdminScheme": []
           }
         ]
       }
@@ -883,6 +883,29 @@
           }
         }
       }
+    },
+    "/api/Calendar/Status": {
+      "get": {
+        "tags": [
+          "Calendar"
+        ],
+        "operationId": "GetCalendarStatuses",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CalendarHealthStatus"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -919,6 +942,11 @@
         "properties": {
           "state": {
             "$ref": "#/components/schemas/AdminUiState"
+          },
+          "version": {
+            "type": "string",
+            "nullable": false,
+            "description": "Version reported by the running ImmichFrame backend."
           }
         },
         "additionalProperties": false
@@ -1442,6 +1470,17 @@
           "language": {
             "type": "string",
             "nullable": true
+          },
+          "enableFrostedGlassUI": {
+            "type": "boolean"
+          },
+          "frostedGlassOpacity": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 10,
+            "maximum": 95,
+            "description": "Frosted Glass opacity percentage (10-95). Defaults to 45%."
           }
         },
         "additionalProperties": false
@@ -1730,6 +1769,30 @@
           "adminPassword": {
             "type": "string",
             "nullable": true
+          },
+          "enableFrostedGlassUI": {
+            "type": "boolean"
+          },
+          "calendarDaysAhead": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "maximum": 30
+          },
+          "calendars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CalendarSource"
+            },
+            "nullable": true
+          },
+          "frostedGlassOpacity": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "minimum": 10,
+            "maximum": 95,
+            "description": "Frosted Glass opacity percentage (10-95). Defaults to 45%."
           }
         },
         "additionalProperties": false
@@ -1758,6 +1821,18 @@
             "nullable": true
           },
           "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "calendarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calendarName": {
+            "type": "string",
+            "nullable": true
+          },
+          "calendarColor": {
             "type": "string",
             "nullable": true
           }
@@ -1897,7 +1972,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "ServerAccountSettings": {
         "type": "object",
@@ -1975,6 +2050,14 @@
           "rating": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "excludedPeople": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
             "nullable": true
           }
         },
@@ -2118,6 +2201,56 @@
               "nullable": true
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CalendarSource": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CalendarHealthStatus": {
+        "type": "object",
+        "properties": {
+          "calendarId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "calendarName": {
+            "type": "string",
+            "nullable": false
+          },
+          "calendarColor": {
+            "type": "string",
+            "nullable": false
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "usingFallback": {
+            "type": "boolean"
+          },
+          "showWarning": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false

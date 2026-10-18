@@ -11,6 +11,8 @@ namespace ImmichFrame.WebApi.Controllers
     {
         /// <summary>What the admin UI should show.</summary>
         public AdminUiState State { get; set; } = AdminUiState.Disabled;
+
+        public string Version { get; set; } = string.Empty;
     }
 
     public class AdminSetupDto
@@ -53,7 +55,13 @@ namespace ImmichFrame.WebApi.Controllers
         [AllowAnonymous]
         public AdminStatusDto GetStatus()
         {
-            return new AdminStatusDto { State = _adminAuthService.State };
+            var version = AppVersion.Current;
+
+            return new AdminStatusDto
+            {
+                State = _adminAuthService.State,
+                Version = version
+            };
         }
 
         /// <summary>

@@ -24,6 +24,8 @@ public class LiveGeneralSettings(ISettingsProvider _provider) : IGeneralSettings
     public bool DownloadImages => Current.DownloadImages;
     public int RenewImagesDuration => Current.RenewImagesDuration;
     public bool ShowClock => Current.ShowClock;
+    public bool EnableFrostedGlassUI => Current.EnableFrostedGlassUI;
+    public int? FrostedGlassOpacity => Current.FrostedGlassOpacity;
     public string? ClockFormat => Current.ClockFormat;
     public string? ClockDateFormat => Current.ClockDateFormat;
     public bool ShowPhotoDate => Current.ShowPhotoDate;
@@ -48,6 +50,8 @@ public class LiveGeneralSettings(ISettingsProvider _provider) : IGeneralSettings
     public string Layout => Current.Layout;
     public string Language => Current.Language;
     public List<string> Webcalendars => Current.Webcalendars;
+    public List<ImmichFrame.Core.Models.CalendarSource>? Calendars => Current.Calendars;
+    public int CalendarDaysAhead => Current.CalendarDaysAhead;
     public int RefreshAlbumPeopleInterval => Current.RefreshAlbumPeopleInterval;
     public string? WeatherApiKey => Current.WeatherApiKey;
     public string? WeatherLatLong => Current.WeatherLatLong;

@@ -4,6 +4,13 @@ General:
   AdminPassword: AdminPassword_TEST
   DownloadImages: true
   RenewImagesDuration: 7
+  CalendarDaysAhead: 7
+  Calendars:
+  - Id: 11111111-2222-3333-4444-555555555555
+    Name: Calendars.Name_TEST
+    Url: Calendars.Url_TEST
+    Color: Calendars.Color_TEST
+    Enabled: true
   Webcalendars:
   - Webcalendars_TEST
   RefreshAlbumPeopleInterval: 7
@@ -16,6 +23,8 @@ General:
   Webhook: Webhook_TEST
   Interval: 7
   TransitionDuration: 7.7
+  EnableFrostedGlassUI: true
+  FrostedGlassOpacity: 45
   ShowClock: true
   ClockFormat: ClockFormat_TEST
   ClockDateFormat: ClockDateFormat_TEST
@@ -50,6 +59,7 @@ Accounts:
   Rating: 7
   Albums:
   - 00000000-0000-0000-0000-000000000001
+  ExcludedPeople: []
   ExcludedAlbums:
   - 00000000-0000-0000-0000-000000000001
   People:
