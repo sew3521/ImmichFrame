@@ -6,7 +6,7 @@
     let { target }: Props = $props();
 
     const defaultOpacity = 45;
-    
+
 
     let enabled = $derived(target.enableFrostedGlassUI === true);
     let opacity = $derived(
