@@ -22,17 +22,69 @@ If and when the upstream developers incorporate the functionality I need, I will
 
 In the meantime, welcome to Artificially Enhanced.
 
-**Why the name?** This fork was developed with substantial
-assistance from ChatGPT. AI helped write code, troubleshoot
-problems, develop tests, and produce documentation.
+## A Note From Me About AI
 
-I provided the requirements, made the design decisions,
-and tested the results. The application itself does not
-require an AI service to operate.
+Howdy!
 
-I believe people should know when software was developed
-with AI assistance. If that makes you uncomfortable,
-I completely understand. I'd rather be upfront about it.
+I know some of you aren't going to like the fact that this project was "vibe coded." I get it. I really do.
+
+I'm extremely comfortable writing Batch and PowerShell scripts, and I can stumble my way through Python when necessary. I've been writing scripts since long before AI was even part of the conversation. But when it comes to most traditional programming tasks? I'm pretty terrible at them.
+
+I'm not a software developer, and I'm not going to pretend to be one.
+
+So how did we get here?
+
+Originally, I was just trying to get ImmichFrame working properly on my digital photo frame. The APK was triggering a security popup on my device, so I enlisted ChatGPT to help me modify the APK and resolve the issue.
+
+Once that was fixed, I noticed the calendar feature was behaving strangely with certain events. Naturally, I asked ChatGPT to help me fix that too.
+
+Then I wanted a way to distinguish between events on my calendar and events on my wife's calendar.
+
+And that's where the feature creep started.
+
+One change led to another, which led to another, and before I knew it, I was maintaining my own version of an application that I originally just wanted to display some family photos.
+
+Once I had everything working the way I wanted, I started looking through the original project's proposed features and pull requests. There were several improvements I hadn't even considered, so I figured, what the hell, let's see if ChatGPT can help me incorporate some of those too.
+
+Then I started looking at the dependencies and noticed some potential security vulnerabilities.
+
+So naturally, we had to deal with those as well.
+
+At this point, what started as fixing an annoying popup has turned into a much bigger project than I ever intended.
+
+**Do I feel a little dirty about putting this together with so much help from AI?**
+
+Actually, yeah. A little.
+
+But here's something I want to make clear: I haven't been using an autonomous AI coding agent to make these changes for me.
+
+I'm sitting here copying and pasting code and commands from a web browser into VS Code or a terminal window. I'm reviewing the output, running tests, troubleshooting errors, and trying to understand what we're changing and why.
+
+Why do it this way? Because I actually want to have some idea of what's going on.
+
+Does that make me a developer? Absolutely not. Does it mean I understand every line of code in this project? Hell no. But I'm learning things along the way, and I'm having a lot of fun doing it.
+
+Do you have to like that this project was developed with AI? No.
+
+Do you have to agree with my decision to make it? Also no.
+
+Am I having a ton of fun improving an application I genuinely enjoy using?
+
+**You bet your ass I am.**
+
+So, if you'd like to run this version, please do! And if you encounter problems, feel free to let me know. I'll do my best to help.
+
+I'm making this project primarily for myself, but I'm happy to share it with anyone else who finds it useful.
+
+Maybe one of these days I'll sit down and seriously try to get better at programming. Truth be told, though, I've never particularly enjoyed it.
+
+And these days, between having two kids and a wife, a senior IT job, involvement in local government, and approximately zero free time, this is the approach that works for me.
+
+I'm not claiming this is the right way to develop software. I'm not claiming the code is perfect. And I'm certainly not claiming to be some brilliant developer.
+
+I'm just a guy who likes an open-source project, wanted a few things to work differently, and found a way to make that happen.
+
+**Sorry, not sorry, if that offends you. :)**
 
 ## What's different?
 
@@ -78,34 +130,6 @@ The application uses the existing ImmichFrame configuration structure with addit
 **Back up your configuration and database before migrating from an existing installation.**
 
 For general installation and configuration information, refer to the [official ImmichFrame documentation](https://immichframe.dev).
-
-## A note about AI assistance (and my apparent laziness)
-
-I want to be upfront about something: **a substantial amount of the development work on Artificially Enhanced was done with assistance from ChatGPT.**
-
-I've been writing BATCH files and PowerShell scripts since long before AI became everyone's favorite excuse to call themselves a software developer. I have some programming experience, understand the fundamentals, and have spent more years than I'd care to admit automating things because doing them manually seemed like a stupid waste of time.
-
-That being said, I'm not going to pretend I'm an expert C# developer. I'm much more comfortable writing scripts and managing infrastructure than developing a full application from scratch.
-
-That's where ChatGPT came in.
-
-I worked with an AI assistant that goes by Ryn. Yes, the AI picked its own name. No, I don't know why I let it do that.
-
-Ryn helped me design features, write and modify code, troubleshoot problems, create automated tests, and generally figure out why something that sounded relatively simple was suddenly consuming hours of my life.
-
-I provided the requirements, made the design decisions, tested everything in my environment, and worked through the inevitable bugs. This wasn't a case of typing "make me an app" into ChatGPT and blindly uploading whatever came out.
-
-**And before anyone asks, yes, I was apparently too damn lazy to even write my own README.**
-
-You're reading something Ryn wrote for me because, after spending all this time working on the actual application, the last thing I wanted to do was write documentation explaining what the hell I had just done.
-
-So there you go. Full disclosure. Even the explanation about how much AI I used was written by AI. At least I'm consistent.
-
-I'm not embarrassed about using AI to help develop this. It's another tool, and a pretty useful one when you know what you're trying to accomplish.
-
-That doesn't mean everything is perfect. AI can produce some spectacularly stupid code, and I've certainly caught my share of it during this project. We've put considerable effort into testing, but bugs are still possible.
-
-If you find one, feel free to report it. Just remember that this is a personal fork maintained by a guy who originally wanted a few extra calendar features, not a commercial software company with an army of developers.
 
 ## Dependencies and security updates
 
