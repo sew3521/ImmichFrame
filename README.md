@@ -107,6 +107,25 @@ That doesn't mean everything is perfect. AI can produce some spectacularly stupi
 
 If you find one, feel free to report it. Just remember that this is a personal fork maintained by a guy who originally wanted a few extra calendar features, not a commercial software company with an army of developers.
 
+## Dependencies and security updates
+
+One of my goals with Artificially Enhanced is to keep its
+dependencies reasonably current.
+
+I try to incorporate newer package versions, security fixes,
+and compatibility improvements when doing so makes sense.
+
+That doesn't mean every dependency will always be the newest
+version available. Major upgrades can introduce breaking changes,
+and I'd rather have stable software than brag about version numbers
+while everything catches fire.
+
+Updates are evaluated for compatibility and tested before release.
+Known security vulnerabilities receive particular attention.
+
+The goal is reasonably current, secure, and stable software.
+Preferably all three at the same time.
+
 ## Future plans
 
 For v2.2, I'm considering configuration import/export functionality to make backups and migrations easier.
