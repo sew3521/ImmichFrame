@@ -24,7 +24,7 @@ Console.WriteLine($@"
 | | '_ ` _ \| '_ ` _ \| |/ __| '_ \|  _| '__/ _` | '_ ` _ \ / _ \
 | | | | | | | | | | | | | (__| | | | | | | | (_| | | | | | |  __/
 |_|_| |_| |_|_| |_| |_|_|\___|_| |_\_| |_|  \__,_|_| |_| |_|\___|
-                    WESCHE EDITION
+               ARTIFICIALLY ENHANCED
                      v{version}");
 Console.WriteLine();
 

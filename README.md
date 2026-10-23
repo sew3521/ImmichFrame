@@ -1,6 +1,6 @@
-# ImmichFrame - Wesche Edition
+# ImmichFrame - Artificially Enhanced
 
-### A slightly modified version of an already awesome project
+### Human ideas. Artificial assistance. Questionable time management.
 
 First things first: **ImmichFrame is an awesome project, and I want to give full credit to the original developers.** Without their work, none of this would exist.
 
@@ -18,13 +18,25 @@ Rather than keep everything to myself, I figured I would make the modified versi
 
 Quite the opposite. My preference would be for these improvements to eventually make their way into the original project.
 
-If and when the upstream developers incorporate the functionality I need, I will likely sunset Wesche Edition and return to running the official version. Maintaining a separate fork indefinitely isn't exactly on my bucket list.
+If and when the upstream developers incorporate the functionality I need, I will likely sunset Artificially Enhanced and return to running the official version. Maintaining a separate fork indefinitely isn't exactly on my bucket list.
 
-In the meantime, welcome to Wesche Edition.
+In the meantime, welcome to Artificially Enhanced.
+
+**Why the name?** This fork was developed with substantial
+assistance from ChatGPT. AI helped write code, troubleshoot
+problems, develop tests, and produce documentation.
+
+I provided the requirements, made the design decisions,
+and tested the results. The application itself does not
+require an AI service to operate.
+
+I believe people should know when software was developed
+with AI assistance. If that makes you uncomfortable,
+I completely understand. I'd rather be upfront about it.
 
 ## What's different?
 
-Wesche Edition v2.0.0.0 includes several enhancements to the original ImmichFrame experience.
+The current v2.0.0.0 release includes several enhancements to the original ImmichFrame experience.
 
 ### Calendar improvements
 
@@ -49,17 +61,17 @@ Wesche Edition v2.0.0.0 includes several enhancements to the original ImmichFram
 - Updated startup branding and version reporting.
 - Additional automated tests covering calendar behavior, configuration, and reliability.
 
-Some features build on functionality already present upstream. This list describes the capabilities of Wesche Edition, not necessarily features exclusive to this fork.
+Some features build on functionality already present upstream. This list describes the capabilities of Artificially Enhanced, not necessarily features exclusive to this fork.
 
 ## Installation
 
-The Docker image will be published through GitHub Container Registry.
+The Docker image is published through GitHub Container Registry.
 
 Image:
 
 `ghcr.io/sew3521/immichframe:wesche-v2.0.0.0`
 
-Wesche Edition is intended for Docker-based deployments, including TrueNAS SCALE.
+Artificially Enhanced is intended for Docker-based deployments, including TrueNAS SCALE.
 
 The application uses the existing ImmichFrame configuration structure with additional settings for the features introduced in this fork.
 
@@ -69,7 +81,7 @@ For general installation and configuration information, refer to the [official I
 
 ## A note about AI assistance (and my apparent laziness)
 
-I want to be upfront about something: **a substantial amount of the development work on Wesche Edition was done with assistance from ChatGPT.**
+I want to be upfront about something: **a substantial amount of the development work on Artificially Enhanced was done with assistance from ChatGPT.**
 
 I've been writing BATCH files and PowerShell scripts since long before AI became everyone's favorite excuse to call themselves a software developer. I have some programming experience, understand the fundamentals, and have spent more years than I'd care to admit automating things because doing them manually seemed like a stupid waste of time.
 
@@ -97,7 +109,7 @@ If you find one, feel free to report it. Just remember that this is a personal f
 
 ## Future plans
 
-For v2.1, I'm considering configuration import/export functionality to make backups and migrations easier.
+For v2.2, I'm considering configuration import/export functionality to make backups and migrations easier.
 
 Beyond that, I don't have some grand roadmap to turn this into an entirely different application.
 
@@ -111,7 +123,7 @@ Thanks also to the [Immich team](https://github.com/immich-app/immich) for creat
 
 And, apparently, thanks to Ryn for helping me turn a few feature requests into an entire software release.
 
-**Wesche Edition is an unofficial fork. It is not affiliated with or endorsed by the original ImmichFrame developers or the Immich project.**
+**Artificially Enhanced is an unofficial fork. It is not affiliated with or endorsed by the original ImmichFrame developers or the Immich project.**
 
 The original project's license and applicable attribution remain in place.
 
