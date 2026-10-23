@@ -35,6 +35,17 @@ This is an unofficial fork of ImmichFrame.
 - Retained NUnit 4.4.0 after testing identified compilation
   incompatibilities with NUnit 4.6.1.
 - Verified all 188 backend tests pass after these updates.
+- Updated compatible frontend dependencies within their existing
+  package version constraints, including Svelte, Vite, PostCSS,
+  date-fns, and development tooling.
+- Verified the updated npm lockfile with a clean `npm ci` installation.
+- Confirmed Svelte validation reports zero errors and warnings.
+- Confirmed the frontend production build completes successfully.
+- Verified zero known vulnerabilities in production npm dependencies.
+- Seven low-severity findings remain in the full npm dependency audit.
+  These are being evaluated separately to avoid forcing breaking
+  framework upgrades.
+- Retained Node.js 22 and npm 10 for build compatibility.
 - Additional compatible dependency updates are being evaluated.
 
 ### Planned
