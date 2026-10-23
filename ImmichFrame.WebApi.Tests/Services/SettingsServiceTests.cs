@@ -153,6 +153,8 @@ namespace ImmichFrame.WebApi.Tests.Services
             {
                 new() { ImmichServerUrl = "http://immich.local", ApiKey = "key123" }
             };
+            settings.GeneralSettingsImpl ??= new GeneralSettings();
+            settings.GeneralSettingsImpl.TimeZoneId = "America/Chicago";
             await service.UpdateAsync(settings);
 
             Assert.Multiple(() =>
@@ -166,6 +168,9 @@ namespace ImmichFrame.WebApi.Tests.Services
             var second = CreateService();
             await second.InitializeAsync();
             Assert.That(second.Current.Accounts.Single().ApiKey, Is.EqualTo("key123"));
+            Assert.That(
+                second.Current.GeneralSettings.TimeZoneId,
+                Is.EqualTo("America/Chicago"));
         }
 
         [Test]

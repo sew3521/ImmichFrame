@@ -7,29 +7,41 @@ namespace ImmichFrame.WebApi.Helpers
 {
     public static class CalendarExtensionMethods
     {
-        public static IAppointment ToAppointment(this Occurrence occurrence)
+        public static IAppointment ToAppointment(
+            this Occurrence occurrence,
+            TimeZoneInfo? timeZone = null)
         {
             var calEvent = occurrence.Source as CalendarEvent;
+            var zone = timeZone ?? TimeZoneInfo.Local;
 
             return new Appointment
             {
                 Summary = calEvent?.Summary ?? "",
                 Description = calEvent?.Description ?? "",
-                StartTime = occurrence.Period.StartTime.AsSystemLocal,
+                StartTime = ImmichFrame.Core.Helpers.CalendarAppointmentTime.Convert(
+                    occurrence.Period.StartTime, zone),
                 Duration = occurrence.Period.Duration,
-                EndTime = occurrence.Period.EndTime.AsSystemLocal,
+                EndTime = ImmichFrame.Core.Helpers.CalendarAppointmentTime.Convert(
+                    occurrence.Period.EndTime, zone),
                 Location = calEvent?.Location ?? ""
             };
         }
-        public static IAppointment ToAppointment(this CalendarEvent calEvent)
+
+        public static IAppointment ToAppointment(
+            this CalendarEvent calEvent,
+            TimeZoneInfo? timeZone = null)
         {
+            var zone = timeZone ?? TimeZoneInfo.Local;
+
             return new Appointment
             {
                 Summary = calEvent.Summary,
                 Description = calEvent.Description,
-                StartTime = calEvent.Start.AsSystemLocal,
+                StartTime = ImmichFrame.Core.Helpers.CalendarAppointmentTime.Convert(
+                    calEvent.Start, zone),
                 Duration = calEvent.Duration,
-                EndTime = calEvent.End.AsSystemLocal,
+                EndTime = ImmichFrame.Core.Helpers.CalendarAppointmentTime.Convert(
+                    calEvent.End, zone),
                 Location = calEvent.Location
             };
         }

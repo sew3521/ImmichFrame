@@ -10,7 +10,8 @@ public static class CalendarCacheKey
     public static string Create(
         DateTime today,
         int daysAhead,
-        IEnumerable<CalendarSource> calendars)
+        IEnumerable<CalendarSource> calendars,
+        string? timeZoneId = null)
     {
         var configuration = calendars.Select(x => new
         {
@@ -24,6 +25,6 @@ public static class CalendarCacheKey
         var json = JsonSerializer.Serialize(configuration);
         var hash = SHA256.HashData(Encoding.UTF8.GetBytes(json));
 
-        return $"appointments-{today:yyyyMMdd}-{daysAhead}-{Convert.ToHexString(hash)}";
+        return $"appointments-{today:yyyyMMdd}-{daysAhead}-{timeZoneId ?? "system"}-{Convert.ToHexString(hash)}";
     }
 }

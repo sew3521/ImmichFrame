@@ -16,6 +16,7 @@ export type AdminStatusDto = {
     state?: AdminUiState;
     /** Version reported by the running ImmichFrame backend. */
     version?: string;
+    systemTimeZoneId?: string;
 };
 export type AdminSetupDto = {
     adminPassword?: string | null;
@@ -52,6 +53,7 @@ export type GeneralSettings = {
     showPhotoDate?: boolean;
     showImageDesc?: boolean;
     showPeopleDesc?: boolean;
+    showPeopleAge?: boolean;
     showTagsDesc?: boolean;
     showAlbumName?: boolean;
     showImageLocation?: boolean;
@@ -59,6 +61,11 @@ export type GeneralSettings = {
     secondaryColor?: string | null;
     style?: string | null;
     baseFontSize?: string | null;
+    splitViewLookahead?: number;
+    useGoogleFont?: boolean;
+    truncateCalendarDescriptions?: boolean;
+    calendarDescriptionMaxCharacters?: number;
+    googleFontFamily?: string | null;
     showWeatherDescription?: boolean;
     weatherIconUrl?: string | null;
     imageZoom?: boolean;
@@ -77,6 +84,7 @@ export type GeneralSettings = {
     adminPassword?: string | null;
     enableFrostedGlassUI?: boolean;
     calendarDaysAhead?: number;
+    timeZoneId?: string | null;
     calendars?: CalendarSource[] | null;
     /** Frosted Glass opacity percentage (10-95). Defaults to 45%. */
     frostedGlassOpacity?: number | null;
@@ -296,6 +304,7 @@ export type ClientSettingsDto = {
     photoDateFormat?: string | null;
     showImageDesc?: boolean;
     showPeopleDesc?: boolean;
+    showPeopleAge?: boolean;
     showTagsDesc?: boolean;
     showAlbumName?: boolean;
     showImageLocation?: boolean;
@@ -304,6 +313,11 @@ export type ClientSettingsDto = {
     secondaryColor?: string | null;
     style?: string | null;
     baseFontSize?: string | null;
+    splitViewLookahead?: number;
+    useGoogleFont?: boolean;
+    truncateCalendarDescriptions?: boolean;
+    calendarDescriptionMaxCharacters?: number;
+    googleFontFamily?: string | null;
     showWeatherDescription?: boolean;
     weatherIconUrl?: string | null;
     imageZoom?: boolean;

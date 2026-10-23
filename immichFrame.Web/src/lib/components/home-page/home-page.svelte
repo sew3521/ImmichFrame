@@ -9,6 +9,7 @@
 	import type AssetComponentInstance from '../elements/asset-component.svelte';
 	import { configStore } from '$lib/stores/config.store';
 	import { applyBaseFontSize, applyFrameColors } from '$lib/hooks/useTheme';
+	import { applyGoogleFont, removeGoogleFontLink } from '$lib/hooks/useGoogleFont';
 	import ErrorElement from '../elements/error-element.svelte';
 	import Clock from '../elements/clock.svelte';
 	import Appointments from '../elements/appointments.svelte';
@@ -16,6 +17,8 @@
 	import { page } from '$app/state';
 	import { ProgressBarLocation, ProgressBarStatus } from '../elements/progress-bar.types';
 	import { isImageAsset, isVideoAsset } from '$lib/constants/asset-type';
+    import { isPortraitImage } from '$lib/utils/asset-orientation';
+	import { navigateNext, navigatePrevious } from '$lib/utils/slideshow-navigation';
 
 	interface AssetsState {
 		assets: [string, api.AssetResponseDto, api.AssetFaceResponseDto[], api.AlbumResponseDto[]][];
@@ -28,12 +31,15 @@
 	api.init();
 
 	const PRELOAD_ASSETS = 5;
+	// Lookahead is configured through General Settings.
 	const TRANSITION_WATCHDOG_MS = 10000;
 	const VIDEO_STALL_MS = 15000;
 	const CURSOR_HIDE_MS = 2000;
 	const RELOAD_ON_ERROR_MS = 30000;
 
-	let assetHistory: api.AssetResponseDto[] = $state([]);
+	// Preserve exact displayed groups for backward navigation.
+	let assetHistory: api.AssetResponseDto[][] = $state([]);
+	let assetForwardHistory: api.AssetResponseDto[][] = $state([]);
 	let assetBacklog: api.AssetResponseDto[] = $state([]);
 
 	let displayingAssets: api.AssetResponseDto[] = $state([]);
@@ -216,75 +222,70 @@
 	};
 
 	async function getNextAssets() {
-		if (!assetBacklog.length) {
-			await loadAssets();
-		}
+    // Load a new batch only when there are no unseen assets or
+    // previously displayed groups available for forward navigation.
+    if (!assetForwardHistory.length && !assetBacklog.length) {
+        await loadAssets();
+    }
 
-		if (!error && !assetBacklog.length) {
-			error = true;
-			errorMessage = 'No assets were found! Check your configuration.';
-			return;
-		}
+    if (!assetForwardHistory.length && !assetBacklog.length) {
+        if (!error) {
+            error = true;
+            errorMessage = 'No assets were found! Check your configuration.';
+        }
+        return;
+    }
 
-		const useSplit = shouldUseSplitView(assetBacklog);
-		const next = assetBacklog.splice(0, useSplit ? 2 : 1);
+    const result = navigateNext(
+        {
+            backlog: assetBacklog,
+            current: displayingAssets,
+            history: assetHistory,
+            forwardHistory: assetForwardHistory
+        },
+        {
+            layout: $configStore.layout,
+            lookahead: $configStore.splitViewLookahead ?? 4,
+            maxHistory: 250,
+            describeAsset: (asset) => ({
+                id: asset.id,
+                portrait: isPortraitImage(asset),
+                video: isVideoAsset(asset)
+            })
+        }
+    );
 
-		if (displayingAssets.length) {
-			assetHistory.push(...displayingAssets);
-		}
+    assetBacklog = result.backlog;
+    assetHistory = result.history;
+    assetForwardHistory = result.forwardHistory;
+    displayingAssets = result.current;
 
-		if (assetHistory.length > 250) {
-			assetHistory = assetHistory.slice(-250);
-		}
+    await updateAssetPromises();
+    assetsState = await pickAssets(displayingAssets);
+}
 
-		displayingAssets = next;
-		await updateAssetPromises();
-		assetsState = await pickAssets(next);
-	}
+async function getPreviousAssets() {
+    if (!assetHistory.length) {
+        return;
+    }
 
-	async function getPreviousAssets() {
-		if (!assetHistory.length) {
-			return;
-		}
+    const result = navigatePrevious({
+        backlog: assetBacklog,
+        current: displayingAssets,
+        history: assetHistory,
+        forwardHistory: assetForwardHistory
+    });
 
-		const useSplit = shouldUseSplitView(assetHistory.slice(-2));
-		const next = assetHistory.splice(useSplit ? -2 : -1);
+    assetBacklog = result.backlog;
+    assetHistory = result.history;
+    assetForwardHistory = result.forwardHistory;
+    displayingAssets = result.current;
 
-		if (displayingAssets.length) {
-			assetBacklog.unshift(...displayingAssets);
-		}
+    await updateAssetPromises();
+    assetsState = await pickAssets(displayingAssets);
+}
 
-		displayingAssets = next;
-		await updateAssetPromises();
-		assetsState = await pickAssets(next);
-	}
-
-	function isPortrait(asset: api.AssetResponseDto) {
-		if (isVideoAsset(asset)) {
-			return false;
-		}
-
-		const isFlipped = (orientation: number) => [5, 6, 7, 8].includes(orientation);
-		let assetHeight = asset.exifInfo?.exifImageHeight ?? 0;
-		let assetWidth = asset.exifInfo?.exifImageWidth ?? 0;
-		if (isFlipped(Number(asset.exifInfo?.orientation ?? 0))) {
-			[assetHeight, assetWidth] = [assetWidth, assetHeight];
-		}
-		return assetHeight > assetWidth;
-	}
-
-	function shouldUseSplitView(assets: api.AssetResponseDto[]): boolean {
-		return (
-			$configStore.layout?.trim().toLowerCase() === 'splitview' &&
-			assets.length > 1 &&
-			isImageAsset(assets[0]) &&
-			isImageAsset(assets[1]) &&
-			isPortrait(assets[0]) &&
-			isPortrait(assets[1])
-		);
-	}
-
-	function hasBirthday(assets: api.AssetResponseDto[]) {
+function hasBirthday(assets: api.AssetResponseDto[]) {
 		let today = new Date();
 		let hasBday: boolean = false;
 
@@ -426,6 +427,21 @@
 	$effect(() => applyFrameColors($configStore));
 	$effect(() => applyBaseFontSize($configStore.baseFontSize));
 
+	let slideshowRoot: HTMLElement;
+
+	$effect(() => {
+		if (!slideshowRoot) return;
+
+		// Only track font settings, not unrelated configuration changes.
+		const useGoogleFont = $configStore.useGoogleFont;
+		const googleFontFamily = $configStore.googleFontFamily;
+
+		return applyGoogleFont(slideshowRoot, {
+			useGoogleFont,
+			googleFontFamily
+		});
+	});
+
 	onMount(() => {
 		window.addEventListener('mousemove', showCursor);
 		window.addEventListener('click', showCursor);
@@ -462,6 +478,8 @@
 	});
 
 	onDestroy(async () => {
+		removeGoogleFontLink();
+
 		if (unsubscribeRestart) {
 			unsubscribeRestart();
 		}
@@ -484,7 +502,8 @@
 </script>
 
 <section
-    class="fixed grid h-dvh-safe w-screen bg-black"
+    bind:this={slideshowRoot}
+    class="fixed grid h-dvh-safe w-screen bg-black slideshow-font"
     class:cursor-none={!cursorVisible}
     class:frosted-glass-ui={$configStore.enableFrostedGlassUI === true}
     style:--glass-surface={`rgba(255, 255, 255, ${($configStore.frostedGlassOpacity ?? 45) / 100})`}
@@ -499,6 +518,7 @@
 				showPhotoDate={$configStore.showPhotoDate}
 				showImageDesc={$configStore.showImageDesc}
 				showPeopleDesc={$configStore.showPeopleDesc}
+				showPeopleAge={$configStore.showPeopleAge}
 				showTagsDesc={$configStore.showTagsDesc}
 				showAlbumName={$configStore.showAlbumName}
 				{...assetsState}

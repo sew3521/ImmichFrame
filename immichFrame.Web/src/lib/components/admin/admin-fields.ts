@@ -63,6 +63,12 @@ export const generalSections: SectionDef[] = [
 			{ key: 'primaryColor', label: 'Primary color', type: 'text', placeholder: '#f5deb3' },
 			{ key: 'secondaryColor', label: 'Secondary color', type: 'text', placeholder: '#0f0f0f' },
 			{ key: 'baseFontSize', label: 'Base font size', type: 'text', placeholder: '17px' },
+			{
+				key: 'useGoogleFont',
+				label: 'Use custom Google Font',
+				type: 'checkbox',
+				help: 'Use a Google Font for slideshow text.'
+			},
 			{ key: 'language', label: 'Language', type: 'text', placeholder: 'en' }
 		]
 	},
@@ -86,6 +92,12 @@ export const generalSections: SectionDef[] = [
 			},
 			{ key: 'showImageDesc', label: 'Show image description', type: 'checkbox' },
 			{ key: 'showPeopleDesc', label: 'Show people', type: 'checkbox' },
+                    {
+                        key: 'showPeopleAge',
+                        label: 'Show age when photo was taken',
+                        type: 'checkbox',
+                        help: 'Show a person\'s age in the photo when their birth date is available.'
+                    },
 			{ key: 'showTagsDesc', label: 'Show tags', type: 'checkbox' },
 			{ key: 'showAlbumName', label: 'Show album name', type: 'checkbox' },
 			{ key: 'showImageLocation', label: 'Show image location', type: 'checkbox' },
@@ -98,7 +110,7 @@ export const generalSections: SectionDef[] = [
 		]
 	},
 	{
-		title: 'Weather & Calendar',
+		title: 'Weather',
 		fields: [
 			{
 				key: 'weatherApiKey',
@@ -121,16 +133,9 @@ export const generalSections: SectionDef[] = [
 				placeholder: 'https://openweathermap.org/img/wn/{IconId}.png'
 			},
 
-                        {
-                                key: 'calendarDaysAhead',
-                                label: 'Calendar days ahead',
-                                type: 'number',
-                                min: 0,
-                                max: 30,
-                                help: '0 = today only; 2 = today plus the next two days.'
-                        }
-		]
-	},
+
+                        ]
+                       },
 	{
 		title: 'Server',
 		fields: [
@@ -186,4 +191,29 @@ export const accountFields: FieldDef<ServerAccountSettings>[] = [
 	{ key: 'people', label: 'People', type: 'guid-list', help: 'One ID per line.' },
     { key: 'excludedPeople', label: 'Excluded people', type: 'guid-list', help: 'Never display photos containing these recognized people. One ID per line.' },
 	{ key: 'tags', label: 'Tags', type: 'list', help: 'One tag per line.' }
+];
+
+export const calendarDisplayFields: FieldDef[] = [
+    {
+        key: 'calendarDaysAhead',
+        label: 'Calendar days ahead',
+        type: 'number',
+        min: 0,
+        max: 30,
+        help: '0 = today only; 2 = today plus the next two days.'
+    },
+    {
+        key: 'truncateCalendarDescriptions',
+        label: 'Truncate long event descriptions',
+        type: 'checkbox',
+        help: 'Limit event descriptions to two lines and a configurable character count.'
+    },
+    {
+        key: 'calendarDescriptionMaxCharacters',
+        label: 'Maximum event description characters',
+        type: 'number',
+        min: 40,
+        max: 500,
+        help: 'Default: 160 characters. The two-line display limit also applies.'
+    }
 ];

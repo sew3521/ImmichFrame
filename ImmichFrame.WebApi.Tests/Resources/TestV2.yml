@@ -5,6 +5,9 @@ General:
   DownloadImages: true
   RenewImagesDuration: 7
   CalendarDaysAhead: 7
+  TimeZoneId: America/Chicago
+  TruncateCalendarDescriptions: true
+  CalendarDescriptionMaxCharacters: 7
   Calendars:
   - Id: 11111111-2222-3333-4444-555555555555
     Name: Calendars.Name_TEST
@@ -32,12 +35,16 @@ General:
   ShowPhotoDate: true
   ShowImageDesc: true
   ShowPeopleDesc: true
+  ShowPeopleAge: true
   ShowAlbumName: true
   ShowImageLocation: true
   PrimaryColor: PrimaryColor_TEST
   SecondaryColor: SecondaryColor_TEST
   Style: Style_TEST
   BaseFontSize: BaseFontSize_TEST
+  SplitViewLookahead: 7
+  UseGoogleFont: true
+  GoogleFontFamily: GoogleFontFamily_TEST
   ShowWeatherDescription: true
   WeatherIconUrl: WeatherIconUrl_TEST
   ImageZoom: true

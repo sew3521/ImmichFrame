@@ -140,6 +140,32 @@ public class CalendarFallbackCacheTests
     }
 
     [Test]
+    public void TimezoneChange_InvalidatesFallback()
+    {
+        var cache = new CalendarFallbackCache();
+        var source = Source();
+        var today = new DateTime(2026, 10, 18);
+        var now = DateTimeOffset.UtcNow;
+
+        cache.Store(
+            source, today, 2,
+            new[] { Event("Dinner") },
+            now, "America/Chicago");
+
+        Assert.That(
+            cache.GetFallback(
+                source, today, 2,
+                now.AddMinutes(5), "America/Chicago"),
+            Has.Count.EqualTo(1));
+
+        Assert.That(
+            cache.GetFallback(
+                source, today, 2,
+                now.AddMinutes(5), "UTC"),
+            Is.Null);
+    }
+
+    [Test]
     public void RemovedCalendar_IsDiscarded()
     {
         var cache = new CalendarFallbackCache();

@@ -33,6 +33,7 @@ public class LiveGeneralSettings(ISettingsProvider _provider) : IGeneralSettings
     public string? PhotoDateFormat => Current.PhotoDateFormat;
     public bool ShowImageDesc => Current.ShowImageDesc;
     public bool ShowPeopleDesc => Current.ShowPeopleDesc;
+    public bool ShowPeopleAge => Current.ShowPeopleAge;
     public bool ShowTagsDesc => Current.ShowTagsDesc;
     public bool ShowAlbumName => Current.ShowAlbumName;
     public bool ShowImageLocation => Current.ShowImageLocation;
@@ -41,6 +42,11 @@ public class LiveGeneralSettings(ISettingsProvider _provider) : IGeneralSettings
     public string? SecondaryColor => Current.SecondaryColor;
     public string Style => Current.Style;
     public string? BaseFontSize => Current.BaseFontSize;
+    public int SplitViewLookahead => Current.SplitViewLookahead;
+    public bool UseGoogleFont => Current.UseGoogleFont;
+    public bool TruncateCalendarDescriptions => Current.TruncateCalendarDescriptions;
+    public int CalendarDescriptionMaxCharacters => Current.CalendarDescriptionMaxCharacters;
+    public string GoogleFontFamily => Current.GoogleFontFamily;
     public bool ShowWeatherDescription => Current.ShowWeatherDescription;
     public string? WeatherIconUrl => Current.WeatherIconUrl;
     public bool ImageZoom => Current.ImageZoom;
@@ -52,6 +58,7 @@ public class LiveGeneralSettings(ISettingsProvider _provider) : IGeneralSettings
     public List<string> Webcalendars => Current.Webcalendars;
     public List<ImmichFrame.Core.Models.CalendarSource>? Calendars => Current.Calendars;
     public int CalendarDaysAhead => Current.CalendarDaysAhead;
+    public string TimeZoneId => Current.TimeZoneId;
     public int RefreshAlbumPeopleInterval => Current.RefreshAlbumPeopleInterval;
     public string? WeatherApiKey => Current.WeatherApiKey;
     public string? WeatherLatLong => Current.WeatherLatLong;

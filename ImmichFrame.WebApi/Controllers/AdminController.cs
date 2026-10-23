@@ -13,6 +13,7 @@ namespace ImmichFrame.WebApi.Controllers
         public AdminUiState State { get; set; } = AdminUiState.Disabled;
 
         public string Version { get; set; } = string.Empty;
+        public string SystemTimeZoneId { get; set; } = string.Empty;
     }
 
     public class AdminSetupDto
@@ -60,7 +61,8 @@ namespace ImmichFrame.WebApi.Controllers
             return new AdminStatusDto
             {
                 State = _adminAuthService.State,
-                Version = version
+                Version = version,
+                SystemTimeZoneId = TimeZoneInfo.Local.Id
             };
         }
 

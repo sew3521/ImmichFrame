@@ -1,6 +1,6 @@
-# ImmichFrame - Wesche Edition
+# ImmichFrame - Artificially Enhanced
 
-### A slightly modified version of an already awesome project
+### Human ideas. Artificial assistance. Questionable time management.
 
 First things first: **ImmichFrame is an awesome project, and I want to give full credit to the original developers.** Without their work, none of this would exist.
 
@@ -18,13 +18,77 @@ Rather than keep everything to myself, I figured I would make the modified versi
 
 Quite the opposite. My preference would be for these improvements to eventually make their way into the original project.
 
-If and when the upstream developers incorporate the functionality I need, I will likely sunset Wesche Edition and return to running the official version. Maintaining a separate fork indefinitely isn't exactly on my bucket list.
+If and when the upstream developers incorporate the functionality I need, I will likely sunset Artificially Enhanced and return to running the official version. Maintaining a separate fork indefinitely isn't exactly on my bucket list.
 
-In the meantime, welcome to Wesche Edition.
+In the meantime, welcome to Artificially Enhanced.
+
+## A Note From Me About AI
+
+Howdy!
+
+I know some of you aren't going to like the fact that this project was "vibe coded." I get it. I really do.
+
+I'm extremely comfortable writing Batch and PowerShell scripts, and I can stumble my way through Python when necessary. I've been writing scripts since long before AI was even part of the conversation. But when it comes to most traditional programming tasks? I'm pretty terrible at them.
+
+I'm not a software developer, and I'm not going to pretend to be one.
+
+So how did we get here?
+
+Originally, I was just trying to get ImmichFrame working properly on my digital photo frame. The APK was triggering a security popup on my device, so I enlisted ChatGPT to help me modify the APK and resolve the issue.
+
+Once that was fixed, I noticed the calendar feature was behaving strangely with certain events. Naturally, I asked ChatGPT to help me fix that too.
+
+Then I wanted a way to distinguish between events on my calendar and events on my wife's calendar.
+
+And that's where the feature creep started.
+
+One change led to another, which led to another, and before I knew it, I was maintaining my own version of an application that I originally just wanted to display some family photos.
+
+Once I had everything working the way I wanted, I started looking through the original project's proposed features and pull requests. There were several improvements I hadn't even considered, so I figured, what the hell, let's see if ChatGPT can help me incorporate some of those too.
+
+Then I started looking at the dependencies and noticed some potential security vulnerabilities.
+
+So naturally, we had to deal with those as well.
+
+At this point, what started as fixing an annoying popup has turned into a much bigger project than I ever intended.
+
+**Do I feel a little dirty about putting this together with so much help from AI?**
+
+Actually, yeah. A little.
+
+But here's something I want to make clear: I haven't been using an autonomous AI coding agent to make these changes for me.
+
+I'm sitting here copying and pasting code and commands from a web browser into VS Code or a terminal window. I'm reviewing the output, running tests, troubleshooting errors, and trying to understand what we're changing and why.
+
+Why do it this way? Because I actually want to have some idea of what's going on.
+
+Does that make me a developer? Absolutely not. Does it mean I understand every line of code in this project? Hell no. But I'm learning things along the way, and I'm having a lot of fun doing it.
+
+Do you have to like that this project was developed with AI? No.
+
+Do you have to agree with my decision to make it? Also no.
+
+Am I having a ton of fun improving an application I genuinely enjoy using?
+
+**You bet your ass I am.**
+
+So, if you'd like to run this version, please do! And if you encounter problems, feel free to let me know. I'll do my best to help.
+
+I'm making this project primarily for myself, but I'm happy to share it with anyone else who finds it useful.
+
+Maybe one of these days I'll sit down and seriously try to get better at programming. Truth be told, though, I've never particularly enjoyed it.
+
+And these days, between having two kids and a wife, a senior IT job, involvement in local government, and approximately zero free time, this is the approach that works for me.
+
+I'm not claiming this is the right way to develop software. I'm not claiming the code is perfect. And I'm certainly not claiming to be some brilliant developer.
+
+I'm just a guy who likes an open-source project, wanted a few things to work differently, and found a way to make that happen.
+
+**Sorry, not sorry, if that offends you. :)**
 
 ## What's different?
 
-Wesche Edition v2.0.0.0 includes several enhancements to the original ImmichFrame experience.
+The current v2.0.0.0 release includes several enhancements to the original ImmichFrame experience.
 
 ### Calendar improvements
 
@@ -49,17 +113,17 @@ Wesche Edition v2.0.0.0 includes several enhancements to the original ImmichFram
 - Updated startup branding and version reporting.
 - Additional automated tests covering calendar behavior, configuration, and reliability.
 
-Some features build on functionality already present upstream. This list describes the capabilities of Wesche Edition, not necessarily features exclusive to this fork.
+Some features build on functionality already present upstream. This list describes the capabilities of Artificially Enhanced, not necessarily features exclusive to this fork.
 
 ## Installation
 
-The Docker image will be published through GitHub Container Registry.
+The Docker image is published through GitHub Container Registry.
 
 Image:
 
 `ghcr.io/sew3521/immichframe:wesche-v2.0.0.0`
 
-Wesche Edition is intended for Docker-based deployments, including TrueNAS SCALE.
+Artificially Enhanced is intended for Docker-based deployments, including TrueNAS SCALE.
 
 The application uses the existing ImmichFrame configuration structure with additional settings for the features introduced in this fork.
 
@@ -67,37 +131,28 @@ The application uses the existing ImmichFrame configuration structure with addit
 
 For general installation and configuration information, refer to the [official ImmichFrame documentation](https://immichframe.dev).
 
-## A note about AI assistance (and my apparent laziness)
+## Dependencies and security updates
 
-I want to be upfront about something: **a substantial amount of the development work on Wesche Edition was done with assistance from ChatGPT.**
+One of my goals with Artificially Enhanced is to keep its
+dependencies reasonably current.
 
-I've been writing BATCH files and PowerShell scripts since long before AI became everyone's favorite excuse to call themselves a software developer. I have some programming experience, understand the fundamentals, and have spent more years than I'd care to admit automating things because doing them manually seemed like a stupid waste of time.
+I try to incorporate newer package versions, security fixes,
+and compatibility improvements when doing so makes sense.
 
-That being said, I'm not going to pretend I'm an expert C# developer. I'm much more comfortable writing scripts and managing infrastructure than developing a full application from scratch.
+That doesn't mean every dependency will always be the newest
+version available. Major upgrades can introduce breaking changes,
+and I'd rather have stable software than brag about version numbers
+while everything catches fire.
 
-That's where ChatGPT came in.
+Updates are evaluated for compatibility and tested before release.
+Known security vulnerabilities receive particular attention.
 
-I worked with an AI assistant that goes by Ryn. Yes, the AI picked its own name. No, I don't know why I let it do that.
-
-Ryn helped me design features, write and modify code, troubleshoot problems, create automated tests, and generally figure out why something that sounded relatively simple was suddenly consuming hours of my life.
-
-I provided the requirements, made the design decisions, tested everything in my environment, and worked through the inevitable bugs. This wasn't a case of typing "make me an app" into ChatGPT and blindly uploading whatever came out.
-
-**And before anyone asks, yes, I was apparently too damn lazy to even write my own README.**
-
-You're reading something Ryn wrote for me because, after spending all this time working on the actual application, the last thing I wanted to do was write documentation explaining what the hell I had just done.
-
-So there you go. Full disclosure. Even the explanation about how much AI I used was written by AI. At least I'm consistent.
-
-I'm not embarrassed about using AI to help develop this. It's another tool, and a pretty useful one when you know what you're trying to accomplish.
-
-That doesn't mean everything is perfect. AI can produce some spectacularly stupid code, and I've certainly caught my share of it during this project. We've put considerable effort into testing, but bugs are still possible.
-
-If you find one, feel free to report it. Just remember that this is a personal fork maintained by a guy who originally wanted a few extra calendar features, not a commercial software company with an army of developers.
+The goal is reasonably current, secure, and stable software.
+Preferably all three at the same time.
 
 ## Future plans
 
-For v2.1, I'm considering configuration import/export functionality to make backups and migrations easier.
+For v2.2, I'm considering configuration import/export functionality to make backups and migrations easier.
 
 Beyond that, I don't have some grand roadmap to turn this into an entirely different application.
 
@@ -111,7 +166,7 @@ Thanks also to the [Immich team](https://github.com/immich-app/immich) for creat
 
 And, apparently, thanks to Ryn for helping me turn a few feature requests into an entire software release.
 
-**Wesche Edition is an unofficial fork. It is not affiliated with or endorsed by the original ImmichFrame developers or the Immich project.**
+**Artificially Enhanced is an unofficial fork. It is not affiliated with or endorsed by the original ImmichFrame developers or the Immich project.**
 
 The original project's license and applicable attribution remain in place.
 

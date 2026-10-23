@@ -16,6 +16,7 @@ namespace ImmichFrame.Core.Interfaces
         public string? PhotoDateFormat { get; }
         public bool ShowImageDesc { get; }
         public bool ShowPeopleDesc { get; }
+        public bool ShowPeopleAge { get; }
         public bool ShowTagsDesc { get; }
         public bool ShowAlbumName { get; }
         public bool ShowImageLocation { get; }
@@ -24,6 +25,11 @@ namespace ImmichFrame.Core.Interfaces
         public string? SecondaryColor { get; }
         public string Style { get; }
         public string? BaseFontSize { get; }
+        public int SplitViewLookahead { get; }
+        public bool UseGoogleFont { get; }
+        public bool TruncateCalendarDescriptions { get; }
+        public int CalendarDescriptionMaxCharacters { get; }
+        public string GoogleFontFamily { get; }
         public bool ShowWeatherDescription { get; }
         public string? WeatherIconUrl { get; }
         public bool ImageZoom { get; }
