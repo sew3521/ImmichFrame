@@ -32,7 +32,7 @@ public class CalendarWindowTests
         );
 
         var today = new DateTime(2026, 10, 16);
-        var appointments = CalendarWindow.GetAppointments(calendar, today, 0);
+        var appointments = CalendarWindow.GetAppointments(calendar, today, 0, CalendarTimeZone.Resolve("America/Chicago"));
 
         Assert.That(appointments, Is.Empty);
     }
@@ -51,7 +51,7 @@ public class CalendarWindowTests
         );
 
         var today = new DateTime(2026, 10, 16);
-        var appointments = CalendarWindow.GetAppointments(calendar, today, 2);
+        var appointments = CalendarWindow.GetAppointments(calendar, today, 2, CalendarTimeZone.Resolve("America/Chicago"));
 
         Assert.That(appointments, Has.Count.EqualTo(1));
     }
@@ -85,7 +85,7 @@ public class CalendarWindowTests
         );
 
         var today = new DateTime(2026, 10, 16);
-        var appointments = CalendarWindow.GetAppointments(calendar, today, 0);
+        var appointments = CalendarWindow.GetAppointments(calendar, today, 0, CalendarTimeZone.Resolve("America/Chicago"));
 
         Assert.That(appointments, Has.Count.EqualTo(1));
         Assert.That(appointments[0].StartTime.Date, Is.EqualTo(today));
@@ -106,7 +106,7 @@ public class CalendarWindowTests
         );
 
         var today = new DateTime(2026, 10, 16);
-        var appointments = CalendarWindow.GetAppointments(calendar, today, 0);
+        var appointments = CalendarWindow.GetAppointments(calendar, today, 0, CalendarTimeZone.Resolve("America/Chicago"));
 
         Assert.That(appointments, Has.Count.EqualTo(1));
         Assert.That(appointments[0].Summary, Is.EqualTo("Overnight Event"));
@@ -126,7 +126,7 @@ public class CalendarWindowTests
         );
 
         var today = new DateTime(2026, 10, 16);
-        var appointments = CalendarWindow.GetAppointments(calendar, today, 2);
+        var appointments = CalendarWindow.GetAppointments(calendar, today, 2, CalendarTimeZone.Resolve("America/Chicago"));
 
         Assert.That(appointments, Is.Empty);
     }

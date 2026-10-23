@@ -56,7 +56,8 @@ public class IcalCalendarService : ICalendarService
 
     public async Task<CalendarFetchResult> GetCalendarResult()
     {
-        var today = DateTime.Today;
+        var timeZone = CalendarTimeZone.Resolve(_serverSettings.TimeZoneId);
+        var today = CalendarTimeZone.Today(timeZone);
         var daysAhead = _serverSettings.CalendarDaysAhead;
 
         var sources = CalendarSettingsMigration.Resolve(
@@ -74,7 +75,8 @@ public class IcalCalendarService : ICalendarService
         })
         .ToList();
 
-        var cacheKey = CalendarCacheKey.Create(today, daysAhead, sources);
+        var cacheKey = CalendarCacheKey.Create(
+            today, daysAhead, sources, timeZone.Id);
 
         if (_appointmentCache.TryGetValue(cacheKey, out CalendarFetchResult? cached)
             && cached != null)
@@ -101,7 +103,8 @@ public class IcalCalendarService : ICalendarService
             void RecordFailure(CalendarSource source)
             {
                 var fallback = _fallbackCache.GetFallback(
-                    source, today, daysAhead, DateTimeOffset.UtcNow);
+                    source, today, daysAhead, DateTimeOffset.UtcNow,
+                    timeZone.Id);
 
                 if (fallback != null)
                 {
@@ -136,14 +139,15 @@ public class IcalCalendarService : ICalendarService
 
                     var sourceAppointments =
                         CalendarWindow.GetAppointments(
-                            calendar, today, daysAhead, source);
+                            calendar, today, daysAhead, source, timeZone);
 
                     _fallbackCache.Store(
                         source,
                         today,
                         daysAhead,
                         sourceAppointments,
-                        DateTimeOffset.UtcNow);
+                        DateTimeOffset.UtcNow,
+                        timeZone.Id);
 
                     appointments.AddRange(sourceAppointments);
 

@@ -5,6 +5,7 @@ namespace ImmichFrame.Core.Interfaces
         public List<string> Webcalendars { get; }
         public List<ImmichFrame.Core.Models.CalendarSource>? Calendars { get; }
         public int CalendarDaysAhead { get; }
+        public string TimeZoneId { get; }
         public int RefreshAlbumPeopleInterval { get; }
         public string? WeatherApiKey { get; }
         public string? WeatherLatLong { get; }

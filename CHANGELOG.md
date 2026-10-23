@@ -7,6 +7,54 @@ This is an unofficial fork of ImmichFrame.
 
 ## [Unreleased] - v2.1.0.0
 
+### Added
+
+- Configurable split-view portrait pairing lookahead.
+  - Adjustable from 2 to 8 images through an administration slider.
+  - Defaults to 4 images.
+  - Only displayed when Split View is selected.
+  - Preserves existing slideshow navigation history.
+- Improved age display for recognized people.
+  - Shows days for newborns and months for children under two.
+  - Shows completed years from age two onward.
+  - Handles leap years and shorter calendar months.
+  - Preserves names when dates are missing or invalid.
+  - Age is calculated when the photograph was taken.
+
+- Optional Google Fonts support for slideshow text.
+  - Custom font selection through the administration interface.
+  - Inter is the default alternate font.
+  - Original fonts remain available as fallbacks.
+  - Font stylesheets load only when enabled.
+- Configurable calendar description truncation.
+  - Enabled by default.
+  - Maximum two visible lines.
+  - Default character limit of 160, configurable from 40 to 500.
+  - Original calendar event data remains unchanged.
+- Separate Weather and Calendar administration settings sections.
+- Configurable calendar timezone.
+  - Defaults to the container's configured timezone.
+  - Optional IANA timezone override in Calendar administration.
+  - Displays the detected container timezone in the admin UI.
+  - Timezone-aware calendar date boundaries and event conversion.
+  - Preserves all-day dates and floating event times.
+  - Timezone-aware primary and fallback calendar caches.
+  - Regression tests for UTC, Chicago, and daylight saving changes.
+- Improved image orientation detection.
+  - Uses EXIF dimensions and orientation when available.
+  - Falls back to asset dimensions when EXIF data is incomplete.
+  - Handles rotated images without double-applying orientation.
+
+### Compatibility
+
+- Improved compatibility with older Chromium-based browsers by
+  removing unsupported CSS cascade layers during frontend builds.
+- Preserved Tailwind utility styles and custom slideshow styling.
+- Verified the production CSS contains no remaining `@layer`
+  directives.
+- Based on upstream ImmichFrame PR #720 by JW-CH:
+  https://github.com/immichFrame/ImmichFrame/pull/720
+
 ### Changed
 
 - Rebranded the fork as ImmichFrame - Artificially Enhanced.
@@ -34,7 +82,7 @@ This is an unofficial fork of ImmichFrame.
 - Updated NUnit.Analyzers from 4.10.0 to 4.15.0.
 - Retained NUnit 4.4.0 after testing identified compilation
   incompatibilities with NUnit 4.6.1.
-- Verified all 188 backend tests pass after these updates.
+- Verified all 247 backend tests pass under both UTC and America/Chicago.
 - Updated compatible frontend dependencies within their existing
   package version constraints, including Svelte, Vite, PostCSS,
   date-fns, and development tooling.
@@ -50,12 +98,10 @@ This is an unofficial fork of ImmichFrame.
 
 ### Planned
 
-- Optional Google Fonts support.
 - Optional EXIF and camera information.
-- Optional age display for tagged people.
-- Improved split-view portrait pairing.
 - Configurable photo timezone fallback.
-- Older Chromium browser compatibility improvements.
+- Additional older Chromium browser compatibility improvements
+  as testing identifies them.
 
 Upstream contributors will be credited as their work is incorporated.
 

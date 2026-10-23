@@ -17,7 +17,7 @@
 	import * as adminApi from '$lib/services/admin';
 	import { AdminUiState, type ServerSettings } from '$lib/immichFrameApi';
 	import { adminPasswordStore } from '$lib/stores/admin.store';
-	import { generalSections } from './admin-fields';
+	import { generalSections, calendarDisplayFields } from './admin-fields';
 	import AdminBrand from './admin-brand.svelte';
 	import AdminLogin from './admin-login.svelte';
 	import AdminSetup from './admin-setup.svelte';
@@ -26,12 +26,16 @@
 	import AccountEditor from './account-editor.svelte';
 	import CalendarEditor from './calendar-editor.svelte';
         import FrostedGlassOpacity from './frosted-glass-opacity.svelte';
+    import SplitViewLookahead from './splitview-lookahead.svelte';
+    import CalendarTimezone from './calendar-timezone.svelte';
+        import GoogleFontSettings from './google-font-settings.svelte';
         import { generateCalendarId } from '$lib/utils/calendar-uuid';
 
 	type PageState = 'loading' | 'setup' | 'disabled' | 'login' | 'editor' | 'error';
 
 	let pageState: PageState = $state('loading');
 	let serverVersion = $state('');
+        let systemTimeZoneId = $state('');
 	let settings: ServerSettings = $state({ General: {}, Accounts: [] });
 	let loginError = $state('');
 	let setupError = $state('');
@@ -53,6 +57,7 @@
 				return;
 			}
 			serverVersion = res.data.version ?? '';
+                        systemTimeZoneId = res.data.systemTimeZoneId ?? '';
 			if (res.data.state === AdminUiState.Setup) {
 				pageState = 'setup';
 				return;
@@ -256,15 +261,37 @@
 							<div class="grid gap-x-8 sm:grid-cols-2">
 								{#each section.fields as field (field.key)}
 									<SettingField {field} target={settings.General ?? {}} />
+                                                                        {#if field.key === 'layout'}
+                                                                                <SplitViewLookahead target={settings.General ?? {}} />
+                                                                        {/if}
 									{#if field.key === 'enableFrostedGlassUI'}
-									    <FrostedGlassOpacity target={settings.General ?? {}} />
+										<FrostedGlassOpacity target={settings.General ?? {}} />
 									{/if}
-								{/each}
+									{#if field.key === 'useGoogleFont'}
+										<GoogleFontSettings target={settings.General ?? {}} />
+									{/if}
+									{/each}
 							</div>
 						</SettingsSection>
 					{/each}
 
 					<SettingsSection title="Calendars">
+                                                <div class="mb-5">
+                                                        <h3 class="mb-3 font-semibold">Display Settings</h3>
+                                                        <div class="grid gap-x-8 sm:grid-cols-2">
+                                                                {#each calendarDisplayFields as field (field.key)}
+                                                                        <SettingField {field} target={settings.General ?? {}} />
+                                                                        {#if field.key === 'calendarDaysAhead'}
+                                                                                <CalendarTimezone
+                                                                                    target={settings.General ?? {}}
+                                                                                    {systemTimeZoneId}
+                                                                                />
+                                                                        {/if}
+                                                                {/each}
+                                                        </div>
+                                                </div>
+
+                                                <h3 class="mb-3 font-semibold">Calendar Sources</h3>
 					    <div class="flex flex-col gap-4">
 					        {#each settings.General?.calendars ?? [] as calendar, index (calendar.id)}
 					            <CalendarEditor

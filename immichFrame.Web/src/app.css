@@ -132,3 +132,20 @@ img.icon-weather {
 #appointments .calendar-event-card {
   border-left: 7px solid var(--calendar-accent, #6299EC);
 }
+
+
+/* Optional Google Font, scoped to the slideshow only. */
+.slideshow-font {
+    font-family: var(--slideshow-font-family, inherit);
+}
+
+
+/* Keep long calendar descriptions from taking over the photo frame. */
+.calendar-description-clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+}

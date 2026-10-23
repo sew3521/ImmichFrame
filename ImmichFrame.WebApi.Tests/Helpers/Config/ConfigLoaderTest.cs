@@ -89,7 +89,13 @@ public class ConfigLoaderTest
             switch (type)
             {
                 case var t when t == typeof(string):
-                    Assert.That(value, Is.EqualTo(prefix + prop.Name + "_TEST"), prop.Name);
+                    Assert.That(
+                        value,
+                        Is.EqualTo(
+                            prop.Name == "TimeZoneId"
+                                ? "America/Chicago"
+                                : prefix + prop.Name + "_TEST"),
+                        prop.Name);
                     break;
                 case var t when t == typeof(Boolean):
                     Assert.That(value, Is.EqualTo(true), prop.Name);

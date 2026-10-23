@@ -14,6 +14,7 @@ public sealed class CalendarFallbackCache
         string Color,
         DateTime Date,
         int DaysAhead,
+        string TimeZoneId,
         DateTimeOffset LastSuccess,
         List<IAppointment> Appointments);
 
@@ -27,7 +28,8 @@ public sealed class CalendarFallbackCache
         DateTime date,
         int daysAhead,
         IEnumerable<IAppointment> appointments,
-        DateTimeOffset now)
+        DateTimeOffset now,
+        string? timeZoneId = null)
     {
         _entries[source.Id] = new Entry(
             source.Url,
@@ -35,6 +37,7 @@ public sealed class CalendarFallbackCache
             source.Color,
             date.Date,
             daysAhead,
+            timeZoneId ?? TimeZoneInfo.Local.Id,
             now,
             appointments.ToList());
     }
@@ -43,7 +46,8 @@ public sealed class CalendarFallbackCache
         CalendarSource source,
         DateTime date,
         int daysAhead,
-        DateTimeOffset now)
+        DateTimeOffset now,
+        string? timeZoneId = null)
     {
         if (!_entries.TryGetValue(source.Id, out var entry))
         {
@@ -55,6 +59,7 @@ public sealed class CalendarFallbackCache
             entry.Color != source.Color ||
             entry.Date != date.Date ||
             entry.DaysAhead != daysAhead ||
+            entry.TimeZoneId != (timeZoneId ?? TimeZoneInfo.Local.Id) ||
             now - entry.LastSuccess > _maxAge)
         {
             _entries.Remove(source.Id);

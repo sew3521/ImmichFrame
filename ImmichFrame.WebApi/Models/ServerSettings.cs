@@ -51,6 +51,7 @@ public class GeneralSettings : IGeneralSettings
     public bool ShowPhotoDate { get; set; } = true;
     public bool ShowImageDesc { get; set; } = true;
     public bool ShowPeopleDesc { get; set; } = true;
+    public bool ShowPeopleAge { get; set; } = false;
     public bool ShowTagsDesc { get; set; } = true;
     public bool ShowAlbumName { get; set; } = true;
     public bool ShowImageLocation { get; set; } = true;
@@ -58,6 +59,9 @@ public class GeneralSettings : IGeneralSettings
     public string? SecondaryColor { get; set; }
     public string Style { get; set; } = "none";
     public string? BaseFontSize { get; set; }
+    public int SplitViewLookahead { get; set; } = 4;
+    public bool UseGoogleFont { get; set; } = false;
+    public string GoogleFontFamily { get; set; } = "Inter";
     public bool ShowWeatherDescription { get; set; } = true;
     public string? WeatherIconUrl { get; set; } = "https://openweathermap.org/img/wn/{IconId}.png";
     public bool ImageZoom { get; set; } = true;
@@ -69,6 +73,9 @@ public class GeneralSettings : IGeneralSettings
     public List<string> Webcalendars { get; set; } = new();
     public List<ImmichFrame.Core.Models.CalendarSource>? Calendars { get; set; }
     public int CalendarDaysAhead { get; set; } = 0;
+    public string TimeZoneId { get; set; } = "";
+    public bool TruncateCalendarDescriptions { get; set; } = true;
+    public int CalendarDescriptionMaxCharacters { get; set; } = 160;
     public int RefreshAlbumPeopleInterval { get; set; } = 12;
     public string? WeatherApiKey { get; set; } = string.Empty;
     public string? UnitSystem { get; set; } = "imperial";
@@ -80,6 +87,54 @@ public class GeneralSettings : IGeneralSettings
     public void Validate()
     {
         ImmichFrame.Core.Helpers.CalendarSourceValidator.Validate(Calendars);
+
+        // Empty means follow the container's local timezone.
+        // Explicit timezone identifiers must be recognized by .NET.
+        if (!string.IsNullOrWhiteSpace(TimeZoneId))
+        {
+            try
+            {
+                TimeZoneInfo.FindSystemTimeZoneById(TimeZoneId);
+            }
+            catch (TimeZoneNotFoundException)
+            {
+                throw new ArgumentException(
+                    "Unknown timezone identifier.",
+                    nameof(TimeZoneId));
+            }
+            catch (InvalidTimeZoneException)
+            {
+                throw new ArgumentException(
+                    "Invalid timezone data.",
+                    nameof(TimeZoneId));
+            }
+        }
+
+        // Limit portrait pairing lookahead to a reasonable range.
+        if (SplitViewLookahead < 2 || SplitViewLookahead > 8)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(SplitViewLookahead),
+                "SplitViewLookahead must be between 2 and 8.");
+        }
+
+        // Google Font family names are plain text, never CSS or URLs.
+        // Validate only when enabled so existing configurations remain valid.
+        if (UseGoogleFont)
+        {
+            if (string.IsNullOrWhiteSpace(GoogleFontFamily) ||
+                GoogleFontFamily.Length > 100 ||
+                !System.Text.RegularExpressions.Regex.IsMatch(
+                    GoogleFontFamily,
+                    @"^[A-Za-z0-9][A-Za-z0-9 &'()\-]*$"))
+            {
+                throw new ArgumentException(
+                    "GoogleFontFamily must be a valid font family name " +
+                    "containing only letters, numbers, spaces, " +
+                    "apostrophes, parentheses, ampersands, or hyphens.",
+                    nameof(GoogleFontFamily));
+            }
+        }
 
         if (FrostedGlassOpacity is < 10 or > 95)
         {
@@ -94,6 +149,15 @@ public class GeneralSettings : IGeneralSettings
             throw new ArgumentOutOfRangeException(
                 nameof(CalendarDaysAhead),
                 "CalendarDaysAhead must be between 0 and 30."
+            );
+        }
+
+        if (CalendarDescriptionMaxCharacters < 40 ||
+            CalendarDescriptionMaxCharacters > 500)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(CalendarDescriptionMaxCharacters),
+                "CalendarDescriptionMaxCharacters must be between 40 and 500."
             );
         }
     }

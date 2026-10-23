@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 	import { format } from 'date-fns';
 	import { configStore } from '$lib/stores/config.store';
+	import { truncateCalendarDescription } from '$lib/utils/calendar-description';
 	import { clientIdentifierStore } from '$lib/stores/persist.store';
 
 	api.init();
@@ -100,7 +101,17 @@
 					</p>
 					{appointment.summary}
 					{#if appointment.description}
-						<p class="text-xs font-light">{appointment.description}</p>
+						<p
+                                                class="calendar-event-description text-xs font-light"
+                                                class:calendar-description-clamped={$configStore.truncateCalendarDescriptions !== false}
+                                        >
+                                                {$configStore.truncateCalendarDescriptions === false
+                                                        ? appointment.description
+                                                        : truncateCalendarDescription(
+                                                                appointment.description,
+                                                                $configStore.calendarDescriptionMaxCharacters ?? 160
+                                                        )}
+                                        </p>
 					{/if}
 				</div>
 			{/each}
